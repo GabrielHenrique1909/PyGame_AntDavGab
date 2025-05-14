@@ -1,5 +1,5 @@
 import pygame
-from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED
+from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT
 from assets import load_assets, BACKGROUND
 from sprites import Ben, Idle_Right
 
@@ -20,7 +20,6 @@ def game_screen(window):
 
     DONE = 0
     PLAYING = 1
-    EXPLODING = 2
     state = PLAYING
 
     keys_down = {}
@@ -40,26 +39,30 @@ def game_screen(window):
                     # Dependendo da tecla, altera a velocidade.
                     keys_down[event.key] = True
                     if event.key == pygame.K_LEFT:
-                        player.speedx -= 8
+                        player.speedx -= 5
                     if event.key == pygame.K_RIGHT:
-                        player.speedx += 8
-                    if event.key == pygame.K_ESCAPE:
-                        state = DONE
+                        player.speedx += 5
+                    if event.key == pygame.K_SPACE:
+                        player.shoot()
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
                     # Dependendo da tecla, altera a velocidade.
                     if event.key in keys_down and keys_down[event.key]:
                         if event.key == pygame.K_LEFT:
-                            player.speedx += 8
+                            player.speedx += 5
                         if event.key == pygame.K_RIGHT:
-                            player.speedx -= 8
-                        if event.key == pygame.K_ESCAPE:
-                            state = DONE
+                            player.speedx -= 5
 
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
         all_sprites.update()
 
+        if state == PLAYING:
+            if event.type == pygame.KEYDOWN:
+                # Dependendo da tecla, altera a velocidade.
+                keys_down[event.key] = True
+                if event.key == pygame.K_SPACE:
+                    state = DONE
         # ----- Gera saídas
         window.fill(BLACK)  # Preenche com a cor branca
         window.blit(assets[BACKGROUND], (0, 0))
@@ -67,3 +70,5 @@ def game_screen(window):
         all_sprites.draw(window)
 
         pygame.display.update()  # Mostra o novo frame para o jogador
+
+    return state
