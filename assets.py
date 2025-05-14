@@ -1,6 +1,6 @@
 import pygame
 import os
-from config import BEN_WIDTH, BEN_HEIGHT, IMG_DIR, BEN_DIR
+from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, IMG_DIR, BEN_DIR
 
 BEN_IMG = 'ben_image'
 HURT_ANIM = 'hurt_anim'
@@ -17,6 +17,7 @@ BACKGROUND = 'background'
 def load_assets():
     assets = {}
     assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'Background.png')).convert()
+    assets[BACKGROUND] = pygame.transform.scale(img, (WIDTH, HEIGHT))
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'facing_right.png')).convert_alpha()
     assets[BEN_IMG] = pygame.transform.scale(assets['ben_image'], (BEN_WIDTH, BEN_HEIGHT))
     hurt_anim = []
