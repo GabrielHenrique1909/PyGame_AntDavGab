@@ -12,9 +12,11 @@ RUN_LEFT = 'run_left'
 RUN_RIGHT = 'run_right'
 TRANS_LEFT = 'trans_left'
 TRANS_RIGHT = 'trans_right'
+BACKGROUND = 'background'
 
 def load_assets():
     assets = {}
+    assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'Background.png')).convert()
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'facing_right.png')).convert_alpha()
     assets[BEN_IMG] = pygame.transform.scale(assets['ben_image'], (BEN_WIDTH, BEN_HEIGHT))
     hurt_anim = []
