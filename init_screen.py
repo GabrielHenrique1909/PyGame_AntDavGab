@@ -2,7 +2,7 @@ import pygame
 import random
 from os import path
 
-from config import IMG_DIR, BLACK, FPS, GAME, QUIT
+from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
 
 
 def init_screen(screen):
@@ -11,6 +11,7 @@ def init_screen(screen):
 
     # Carrega o fundo da tela inicial
     background = pygame.image.load(path.join(IMG_DIR, 'inicio.png')).convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background_rect = background.get_rect()
 
     running = True
@@ -26,7 +27,7 @@ def init_screen(screen):
                 state = QUIT
                 running = False
 
-            if event.type == pygame.KEYUP:
+            if event.type == pygame.KEYDOWN:
                 state = GAME
                 running = False
 

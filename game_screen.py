@@ -1,5 +1,5 @@
 import pygame
-from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT
+from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER
 from assets import load_assets, BACKGROUND
 from sprites import Ben, Idle_Right
 
@@ -18,20 +18,19 @@ def game_screen(window):
     player = Ben(groups, assets)
     all_sprites.add(player)
 
-    DONE = 0
     PLAYING = 1
     state = PLAYING
 
     keys_down = {}
 
-    while state != DONE:
+    while state == PLAYING:
         clock.tick(FPS)
 
         # ----- Trata eventos
         for event in pygame.event.get():
             # ----- Verifica consequências
             if event.type == pygame.QUIT:
-                state = DONE
+                state = QUIT
             # Só verifica o teclado se está no estado de jogo
             if state == PLAYING:
                 # Verifica se apertou alguma tecla.
@@ -43,7 +42,8 @@ def game_screen(window):
                     if event.key == pygame.K_RIGHT:
                         player.speedx += 5
                     if event.key == pygame.K_SPACE:
-                        player.shoot()
+                        state = OVER
+
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
                     # Dependendo da tecla, altera a velocidade.
@@ -57,12 +57,7 @@ def game_screen(window):
         # Atualizando a posição dos meteoros
         all_sprites.update()
 
-        if state == PLAYING:
-            if event.type == pygame.KEYDOWN:
-                # Dependendo da tecla, altera a velocidade.
-                keys_down[event.key] = True
-                if event.key == pygame.K_SPACE:
-                    state = DONE
+        
         # ----- Gera saídas
         window.fill(BLACK)  # Preenche com a cor branca
         window.blit(assets[BACKGROUND], (0, 0))
