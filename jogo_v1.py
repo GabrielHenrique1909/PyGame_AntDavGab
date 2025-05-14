@@ -13,12 +13,6 @@ pygame.display.set_caption('Márcio 10')
 
 state = INIT
 while state != QUIT:
-    if state == INIT:
-        state = game_screen(window)
-    elif state == GAME:
-        state = game_screen(window)
-    else:
-        state = game_screen(window)
-
+    state = game_screen(window)
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
