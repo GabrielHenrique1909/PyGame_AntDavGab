@@ -21,6 +21,8 @@ def game_screen(window):
     PLAYING = 1
     state = PLAYING
 
+    ACELERACAO = 2
+
     keys_down = {}
 
     while state == PLAYING:
@@ -42,6 +44,8 @@ def game_screen(window):
                     if event.key == pygame.K_RIGHT:
                         player.speedx += 5
                     if event.key == pygame.K_SPACE:
+                        player.speedy = -20
+                    if event.key == pygame.K_ESCAPE:
                         state = OVER
 
                 # Verifica se soltou alguma tecla.
@@ -55,9 +59,13 @@ def game_screen(window):
 
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
-        all_sprites.update()
+
+        #aplicando gravidade
+        player.speedy += ACELERACAO
 
         
+        all_sprites.update()
+
         # ----- Gera saídas
         window.fill(BLACK)  # Preenche com a cor branca
         window.blit(assets[BACKGROUND], (0, 0))

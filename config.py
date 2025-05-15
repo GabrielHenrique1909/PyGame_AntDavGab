@@ -5,8 +5,8 @@ IMG_DIR = path.join(path.dirname(__file__), 'assets', 'img')
 BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben')
 
 # Dados gerais do jogo.
-WIDTH = 1920 # Largura da tela
-HEIGHT = 1080 # Altura da tela
+WIDTH = 1920 /2 # Largura da tela
+HEIGHT = 1080/2 # Altura da tela
 FPS = 60 # Frames por segundo
 
 # Define tamanhos
