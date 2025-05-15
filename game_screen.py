@@ -43,8 +43,8 @@ def game_screen(window):
                         player.speedx -= 5
                     if event.key == pygame.K_RIGHT:
                         player.speedx += 5
-                    if event.key == pygame.K_SPACE:
-                        player.speedy = -20
+                    if event.key == pygame.K_UP:
+                        player.jump()
                     if event.key == pygame.K_ESCAPE:
                         state = OVER
 
@@ -59,9 +59,6 @@ def game_screen(window):
 
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
-
-        #aplicando gravidade
-        player.speedy += ACELERACAO
 
         
         all_sprites.update()

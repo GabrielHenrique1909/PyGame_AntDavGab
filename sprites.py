@@ -2,9 +2,16 @@ import pygame
 from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT
 from assets import BEN_IMG, IDLE_RIGHT
 
+STILL = 0
+JUMPING = 1
+FALLING = 2
+ACELERACAO = 2
+JUMP_SIZE = 20
+
 class Ben(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
         pygame.sprite.Sprite.__init__(self)
+        self.state = STILL
 
         self.image = assets[BEN_IMG]
         self.mask = pygame.mask.from_surface(self.image)
@@ -17,18 +24,31 @@ class Ben(pygame.sprite.Sprite):
         self.assets = assets
     
     def update(self):
-        self.rect.x += self.speedx
+        self.speedy += ACELERACAO
+        if self.speedy > 0:
+            self.state = FALLING
+            if self.rect.bottom == HEIGHT:
+                self.speedy = 0
+                self.state = STILL
         self.rect.y += self.speedy
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+        if self.rect.top < 0:
+            self.rect.top = 0
+
+        self.rect.x += self.speedx
 
         # Mantem dentro da tela
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
-        if self.rect.bottom > HEIGHT:
-            self.rect.bottom = HEIGHT
-        if self.rect.top < 0:
-            self.rect.top = 0
+        
+    def jump(self):
+        # Só pode pular se ainda não estiver pulando ou caindo
+        if self.state == STILL:
+            self.speedy -= JUMP_SIZE
+            self.state = JUMPING
     
 class Idle_Right(pygame.sprite.Sprite):
     # Construtor da classe.
