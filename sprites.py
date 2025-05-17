@@ -14,8 +14,8 @@ class Ben(pygame.sprite.Sprite):
         self.state = STILL
 
         self.image = assets[BEN_IMG]
-        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.centerx = WIDTH / 2
         self.rect.centery = HEIGHT / 2
         self.speedy = 0
@@ -33,18 +33,18 @@ class Ben(pygame.sprite.Sprite):
                 self.state = STILL
         self.rect.y += self.speedy
 
-        colisoes = pygame.sprite.spritecollide(self, self.blocks, False)
+        colisoes = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         for collision in colisoes:
             # Estava indo para baixo
             if self.speedy > 0:
-                self.rect.bottom = collision.rect.top
+                self.rect.bottom = collision.rect.top + 2
                 # Se colidiu com algo, para de cair
                 self.speedy = 0
                 # Atualiza o estado para parado
                 self.state = STILL
             # Estava indo para cima
             elif self.speedy < 0:
-                self.rect.top = collision.rect.bottom
+                self.rect.top = collision.rect.bottom - 12
                 # Se colidiu com algo, para de cair
                 self.speedy = 0
                 # Atualiza o estado para parado
@@ -57,15 +57,15 @@ class Ben(pygame.sprite.Sprite):
         self.rect.x += self.speedx
 
         # Se colidiu com algum bloco, volta para o ponto antes da colisão
-        collisions = pygame.sprite.spritecollide(self, self.blocks, False)
+        collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         # Corrige a posição do personagem para antes da colisão
         for collision in collisions:
             # Estava indo para a direita
             if self.speedx > 0:
-                self.rect.right = collision.rect.left
+                self.rect.right = collision.rect.left + 20
             # Estava indo para a esquerda
             elif self.speedx < 0:
-                self.rect.left = collision.rect.right
+                self.rect.left = collision.rect.right - 20
 
         # Mantem dentro da tela
         if self.rect.right > WIDTH:
