@@ -49,6 +49,12 @@ def init_screen(screen):
                     else:
                         play.mouse_over(False)
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for play in all_buttons:
+                    if play.rect.collidepoint(event.pos):
+                        state = GAME
+                        running = False                
+
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
         screen.blit(tela_de_inicio, tela_de_inicio_rect)
