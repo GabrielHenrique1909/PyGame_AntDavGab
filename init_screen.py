@@ -1,13 +1,23 @@
 import pygame
 import random
 from os import path
-
+from sprites import Botao
 from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
-
+from assets import load_assets
 
 def init_screen(screen):
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
+    assets = load_assets()
+    # Criando botoes
+    all_buttons = pygame.sprite.Group()
+    x = 20
+    y = 70
+    # Criando o botão play
+    botaoplay = Botao(assets)
+    botaoplay.rect.x = x
+    botaoplay.rect.centery = y
+    all_buttons.add(botaoplay)
 
     # Carrega o fundo da tela inicial
     tela_de_inicio = pygame.image.load(path.join(IMG_DIR, 'teladeinicio.jpg')).convert()
@@ -30,10 +40,19 @@ def init_screen(screen):
             if event.type == pygame.KEYDOWN:
                 state = GAME
                 running = False
+            
+            if event.type == pygame.MOUSEMOTION:
+                #Alterando cor do botão
+                for play in all_buttons:
+                    if play.rect.collidepoint(event.pos):
+                        play.mouse_over(True)
+                    else:
+                        play.mouse_over(False)
 
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
         screen.blit(tela_de_inicio, tela_de_inicio_rect)
+        all_buttons.draw(screen)
 
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
