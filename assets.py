@@ -15,13 +15,14 @@ TRANS_RIGHT = 'trans_right'
 BACKGROUND = 'background'
 INICIO = 'inicio'
 FIM = 'fim'
+TELA_DE_INICIO = 'tela_de_inicio'
 
 def load_assets():
     assets = {}
-    assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'Background.png')).convert()
+    assets[TELA_DE_INICIO] = pygame.image.load(os.path.join(IMG_DIR, 'teladeinicio.jpg')).convert()
+    assets[TELA_DE_INICIO] = pygame.transform.scale(assets[TELA_DE_INICIO], (WIDTH, HEIGHT))
+    assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
     assets[BACKGROUND] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
-    assets[INICIO] = pygame.image.load(os.path.join(IMG_DIR, 'Inicio.png')).convert()
-    assets[INICIO] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
     assets[FIM] = pygame.image.load(os.path.join(IMG_DIR, 'Fim.png')).convert()
     assets[FIM] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'facing_right.png')).convert_alpha()
