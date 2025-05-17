@@ -16,9 +16,21 @@ BACKGROUND = 'background'
 INICIO = 'inicio'
 FIM = 'fim'
 TELA_DE_INICIO = 'tela_de_inicio'
+PLAY = 'play'
+PLAY_CLICADO = 'play_clicado'
 
 def load_assets():
     assets = {}
+    assets[PLAY] = pygame.image.load(os.path.join(IMG_DIR, 'Play.png')).convert()
+    #mudando tamanho das imagens
+    largura = assets['play'].get_rect().width * .20
+    altura = assets['play'].get_rect().height * .20
+    assets[PLAY] = pygame.transform.scale(assets[PLAY], (largura, altura))
+    assets[PLAY_CLICADO] = pygame.image.load(os.path.join(IMG_DIR, 'Play_clicado.png')).convert()
+    #mudando tamanho das imagens
+    largura = assets['play_clicado'].get_rect().width * .20
+    altura = assets['play_clicado'].get_rect().height * .20
+    assets[PLAY_CLICADO] = pygame.transform.scale(assets[PLAY_CLICADO], (largura, altura))
     assets[TELA_DE_INICIO] = pygame.image.load(os.path.join(IMG_DIR, 'teladeinicio.jpg')).convert()
     assets[TELA_DE_INICIO] = pygame.transform.scale(assets[TELA_DE_INICIO], (WIDTH, HEIGHT))
     assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
