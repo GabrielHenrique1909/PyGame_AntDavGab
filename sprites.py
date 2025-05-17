@@ -1,12 +1,12 @@
 import pygame
-from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT
+from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, TILE_SIZE
 from assets import BEN_IMG, IDLE_RIGHT
 
 STILL = 0
 JUMPING = 1
 FALLING = 2
 ACELERACAO = 2
-JUMP_SIZE = 20
+JUMP_SIZE = 30
 
 class Ben(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
@@ -22,6 +22,7 @@ class Ben(pygame.sprite.Sprite):
         self.speedx = 0
         self.groups = groups
         self.assets = assets
+        self.blocks = groups['blocks']
     
     def update(self):
         self.speedy += ACELERACAO
@@ -31,12 +32,40 @@ class Ben(pygame.sprite.Sprite):
                 self.speedy = 0
                 self.state = STILL
         self.rect.y += self.speedy
+
+        colisoes = pygame.sprite.spritecollide(self, self.blocks, False)
+        for collision in colisoes:
+            # Estava indo para baixo
+            if self.speedy > 0:
+                self.rect.bottom = collision.rect.top
+                # Se colidiu com algo, para de cair
+                self.speedy = 0
+                # Atualiza o estado para parado
+                self.state = STILL
+            # Estava indo para cima
+            elif self.speedy < 0:
+                self.rect.top = collision.rect.bottom
+                # Se colidiu com algo, para de cair
+                self.speedy = 0
+                # Atualiza o estado para parado
+                self.state = STILL
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
         if self.rect.top < 0:
             self.rect.top = 0
 
         self.rect.x += self.speedx
+
+        # Se colidiu com algum bloco, volta para o ponto antes da colisão
+        collisions = pygame.sprite.spritecollide(self, self.blocks, False)
+        # Corrige a posição do personagem para antes da colisão
+        for collision in collisions:
+            # Estava indo para a direita
+            if self.speedx > 0:
+                self.rect.right = collision.rect.left
+            # Estava indo para a esquerda
+            elif self.speedx < 0:
+                self.rect.left = collision.rect.right
 
         # Mantem dentro da tela
         if self.rect.right > WIDTH:
@@ -120,3 +149,21 @@ class Botao(pygame.sprite.Sprite):
             self.image = self.assets['play_clicado']
         else:
             self.image = self.assets['play']
+class Tile(pygame.sprite.Sprite):
+
+    # Construtor da classe.
+    def __init__(self, tile_img, row, column):
+        # Construtor da classe pai (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        # Aumenta o tamanho do tile.
+        tile_img = pygame.transform.scale(tile_img, (TILE_SIZE, TILE_SIZE))
+
+        # Define a imagem do tile.
+        self.image = tile_img
+        # Detalhes sobre o posicionamento.
+        self.rect = self.image.get_rect()
+
+        # Posiciona o tile
+        self.rect.x = TILE_SIZE * column
+        self.rect.y = TILE_SIZE * row

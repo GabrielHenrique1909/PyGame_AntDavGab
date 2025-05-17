@@ -18,6 +18,7 @@ FIM = 'fim'
 TELA_DE_INICIO = 'tela_de_inicio'
 PLAY = 'play'
 PLAY_CLICADO = 'play_clicado'
+BLOCO = 'block'
 
 def load_assets():
     assets = {}
@@ -39,6 +40,7 @@ def load_assets():
     assets[FIM] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'facing_right.png')).convert_alpha()
     assets[BEN_IMG] = pygame.transform.scale(assets['ben_image'], (BEN_WIDTH, BEN_HEIGHT))
+    assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'block.png')).convert()
     hurt_anim = []
     for i in range(6):
         # Os arquivos de animação são numerados de 00 a 05

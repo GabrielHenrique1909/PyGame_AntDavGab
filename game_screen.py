@@ -1,18 +1,37 @@
 import pygame
-from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER
-from assets import load_assets, BACKGROUND
-from sprites import Ben, Idle_Right
+from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK
+from assets import load_assets, BACKGROUND, BLOCO
+from sprites import Ben, Idle_Right, Tile
 
 def game_screen(window):
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
     assets = load_assets()
-
+    MAP = [
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK],
+    ]
     # Criando um grupo de meteoros
     all_sprites = pygame.sprite.Group()
+    blocks = pygame.sprite.Group()  #Pra impedir a colisão
     groups = {}
     groups['all_sprites'] = all_sprites
+    groups['blocks']=blocks
 
+    for row in range(len(MAP)):
+        for column in range(len(MAP[row])):
+            tile_type = MAP[row][column]
+            if tile_type == BLOCK:
+                tile = Tile(assets[BLOCO], row, column)
+                all_sprites.add(tile)
+                blocks.add(tile)
      # Criando o jogador
     player = Ben(groups, assets)
     all_sprites.add(player)
