@@ -1,7 +1,7 @@
 import pygame
 import time
 from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, TILE_SIZE
-from assets import BEN_IMG, IDLE_RIGHT, DIAM_IMG, XLR8_IMG, FANT_IMG
+from assets import BEN_IMG, IDLE_RIGHT, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET
 
 class Ben:
     def __init__(self, assets):
@@ -10,6 +10,25 @@ class Ben:
 class Diamante:
     def __init__(self, assets):
         self.image = assets[DIAM_IMG]
+        self.last_shot_time = 0
+        self.shot_cooldown = 0.5
+
+    def shoot(self, player, group, assets):
+        now = time.time()
+        if now - self.last_shot_time < self.shot_cooldown:
+            return  # ainda em cooldown, não atira
+
+        x = player.rect.centerx
+        y = player.rect.centery
+        direction = player.last_dir
+        bullet_img = assets[DIAM_BULLET]
+        if direction == -1:
+            bullet_img = pygame.transform.flip(bullet_img, True, False)
+        bullet = Projectile(x, y, direction, bullet_img)
+        group.add(bullet)
+        self.last_shot_time = now  # registra o último tiro
+
+
 
 class Xlr8:
     def __init__(self, assets):
@@ -29,6 +48,9 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
         pygame.sprite.Sprite.__init__(self)
         self.state = STILL
+        self.last_dir = 1  # Começa olhando para a direita
+        self.last_transform_time = 0  # tempo da última transformação revertida
+        self.transform_cooldown = 3  # segundos de espera após transformação
         self.base_form = Ben(assets)
         self.current_form = self.base_form
         self.transform_time = None
@@ -49,23 +71,31 @@ class Player(pygame.sprite.Sprite):
         # Transformações com W, A, D
         if keys[pygame.K_w]:
             self.transform(Diamante(assets))
-            print('DIAMANTE')
         elif keys[pygame.K_a]:
             self.transform(Xlr8(assets))
         elif keys[pygame.K_d]:
             self.transform(Fantasmagorico(assets))
 
     def transform(self, new_form):
-        if type(self.current_form) != type(new_form):
-            self.current_form = new_form
-            self.transform_time = time.time()
+        now = time.time()
+        # Já está transformado OU ainda está no cooldown
+        if self.current_form != self.base_form or now - self.last_transform_time < self.transform_cooldown:
+            return  # Bloqueia nova transformação
+
+        self.current_form = new_form
+        self.transform_time = now
+        self.image = self.current_form.image
+
     
     def update(self):
         # Reverte após 1 segundo
         if self.current_form != self.base_form and self.transform_time:
-            if time.time() - self.transform_time >= 1:
+            if time.time() - self.transform_time >= 3:
                 self.current_form = self.base_form
                 self.transform_time = None
+                self.image = self.current_form.image
+                self.last_transform_time = time.time()  # Começa o cooldown
+
         self.speedy += ACELERACAO
         if self.speedy > 0:
             self.state = FALLING
@@ -209,3 +239,16 @@ class Tile(pygame.sprite.Sprite):
         # Posiciona o tile
         self.rect.x = TILE_SIZE * column
         self.rect.y = TILE_SIZE * row
+
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self, x, y, direction, image):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speedx = 10 * direction
+
+    def update(self):
+        self.rect.x += self.speedx
+        if self.rect.right < 0 or self.rect.left > WIDTH:
+            self.kill()

@@ -1,7 +1,7 @@
 import pygame
 from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK
 from assets import load_assets, BACKGROUND, BLOCO
-from sprites import Player, Idle_Right, Tile
+from sprites import Player, Diamante, Tile
 
 def game_screen(window):
     # Variável para o ajuste de velocidade
@@ -59,12 +59,18 @@ def game_screen(window):
                     keys_down[event.key] = True
                     if event.key == pygame.K_LEFT:
                         player.speedx -= 5
+                        player.last_dir = -1
                     if event.key == pygame.K_RIGHT:
                         player.speedx += 5
+                        player.last_dir = 1
                     if event.key == pygame.K_UP:
                         player.jump()
                     if event.key == pygame.K_ESCAPE:
                         state = OVER
+                    if event.key == pygame.K_SPACE:
+                        if isinstance(player.current_form, Diamante):
+                            player.current_form.shoot(player, all_sprites, assets)
+
 
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:

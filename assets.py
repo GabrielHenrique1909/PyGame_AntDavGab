@@ -22,6 +22,7 @@ TELA_DE_INICIO = 'tela_de_inicio'
 PLAY = 'play'
 PLAY_CLICADO = 'play_clicado'
 BLOCO = 'block'
+DIAM_BULLET = 'diamante_bullet'
 
 def load_assets():
     assets = {}
@@ -122,4 +123,6 @@ def load_assets():
         img = pygame.transform.scale(img, (64, 64))
         trans_right.append(img)
     assets[TRANS_RIGHT] = trans_right
+    assets[DIAM_BULLET] = pygame.image.load(os.path.join(IMG_DIR, 'diamante_bullet.png')).convert_alpha()
+    assets[DIAM_BULLET] = pygame.transform.scale(assets[DIAM_BULLET], (20, 20))
     return assets
