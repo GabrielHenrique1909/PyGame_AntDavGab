@@ -36,10 +36,6 @@ def init_screen(screen):
             if event.type == pygame.QUIT:
                 state = QUIT
                 running = False
-
-            if event.type == pygame.KEYDOWN:
-                state = GAME
-                running = False
             
             if event.type == pygame.MOUSEMOTION:
                 #Alterando cor do botão

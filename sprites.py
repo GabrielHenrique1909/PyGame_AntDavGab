@@ -242,7 +242,7 @@ class Tile(pygame.sprite.Sprite):
 
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, x, y, direction, image):
-        super().__init__()
+        pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
