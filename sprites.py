@@ -1,6 +1,23 @@
 import pygame
+import time
 from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, TILE_SIZE
-from assets import BEN_IMG, IDLE_RIGHT
+from assets import BEN_IMG, IDLE_RIGHT, DIAM_IMG, XLR8_IMG, FANT_IMG
+
+class Ben:
+    def __init__(self, assets):
+        self.image = assets[BEN_IMG]
+
+class Diamante:
+    def __init__(self, assets):
+        self.image = assets[DIAM_IMG]
+
+class Xlr8:
+    def __init__(self, assets):
+        self.image = assets[XLR8_IMG]
+
+class Fantasmagorico:
+    def __init__(self, assets):
+        self.image = assets[FANT_IMG]
 
 STILL = 0
 JUMPING = 1
@@ -8,12 +25,14 @@ FALLING = 2
 ACELERACAO = 2
 JUMP_SIZE = 30
 
-class Ben(pygame.sprite.Sprite):
+class Player(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
         pygame.sprite.Sprite.__init__(self)
         self.state = STILL
-
-        self.image = assets[BEN_IMG]
+        self.base_form = Ben(assets)
+        self.current_form = self.base_form
+        self.transform_time = None
+        self.image = self.base_form.image
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.centerx = WIDTH / 2
@@ -24,7 +43,29 @@ class Ben(pygame.sprite.Sprite):
         self.assets = assets
         self.blocks = groups['blocks']
     
+    def handle_keys(self, assets):
+        keys = pygame.key.get_pressed()
+
+        # Transformações com W, A, D
+        if keys[pygame.K_w]:
+            self.transform(Diamante(assets))
+            print('DIAMANTE')
+        elif keys[pygame.K_a]:
+            self.transform(Xlr8(assets))
+        elif keys[pygame.K_d]:
+            self.transform(Fantasmagorico(assets))
+
+    def transform(self, new_form):
+        if type(self.current_form) != type(new_form):
+            self.current_form = new_form
+            self.transform_time = time.time()
+    
     def update(self):
+        # Reverte após 1 segundo
+        if self.current_form != self.base_form and self.transform_time:
+            if time.time() - self.transform_time >= 1:
+                self.current_form = self.base_form
+                self.transform_time = None
         self.speedy += ACELERACAO
         if self.speedy > 0:
             self.state = FALLING
@@ -149,6 +190,7 @@ class Botao(pygame.sprite.Sprite):
             self.image = self.assets['play_clicado']
         else:
             self.image = self.assets['play']
+
 class Tile(pygame.sprite.Sprite):
 
     # Construtor da classe.

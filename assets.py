@@ -3,6 +3,9 @@ import os
 from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, IMG_DIR, BEN_DIR
 
 BEN_IMG = 'ben_image'
+DIAM_IMG = 'diamante_image'
+XLR8_IMG = 'xlr8_immage'
+FANT_IMG = 'fantasmagórico_image'
 HURT_ANIM = 'hurt_anim'
 IDLE_LEFT = 'idle_left'
 IDLE_RIGHT = 'idle_right'
@@ -40,7 +43,13 @@ def load_assets():
     assets[FIM] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'facing_right.png')).convert_alpha()
     assets[BEN_IMG] = pygame.transform.scale(assets['ben_image'], (BEN_WIDTH, BEN_HEIGHT))
-    assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'block.png')).convert()
+    assets[DIAM_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'char01.png')).convert_alpha()
+    assets[DIAM_IMG] = pygame.transform.scale(assets['diamante_image'], (BEN_WIDTH, BEN_HEIGHT))
+    assets[XLR8_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'char02.png')).convert_alpha()
+    assets[XLR8_IMG] = pygame.transform.scale(assets['xlr8_immage'], (BEN_WIDTH, BEN_HEIGHT))
+    assets[FANT_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'char03.png')).convert_alpha()
+    assets[FANT_IMG] = pygame.transform.scale(assets['fantasmagórico_image'], (BEN_WIDTH, BEN_HEIGHT))
+    assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert()
     hurt_anim = []
     for i in range(6):
         # Os arquivos de animação são numerados de 00 a 05

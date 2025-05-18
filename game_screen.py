@@ -1,7 +1,7 @@
 import pygame
 from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK
 from assets import load_assets, BACKGROUND, BLOCO
-from sprites import Ben, Idle_Right, Tile
+from sprites import Player, Idle_Right, Tile
 
 def game_screen(window):
     # Variável para o ajuste de velocidade
@@ -33,7 +33,7 @@ def game_screen(window):
                 all_sprites.add(tile)
                 blocks.add(tile)
      # Criando o jogador
-    player = Ben(groups, assets)
+    player = Player(groups, assets)
     all_sprites.add(player)
 
     PLAYING = 1
@@ -78,7 +78,8 @@ def game_screen(window):
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
 
-        
+        player.handle_keys(assets)
+        player.update()
         all_sprites.update()
 
         # ----- Gera saídas
