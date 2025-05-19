@@ -240,6 +240,8 @@ class Tile(pygame.sprite.Sprite):
         self.rect.x = TILE_SIZE * column
         self.rect.y = TILE_SIZE * row
 
+        self.speedx = 0
+
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, x, y, direction, image):
         pygame.sprite.Sprite.__init__(self)

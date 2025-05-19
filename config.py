@@ -6,8 +6,8 @@ BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben')
 FNT_DIR = path.join(path.dirname(__file__), 'assets', 'font')
 
 # Dados gerais do jogo.
-WIDTH = 1920 /2 # Largura da tela
-HEIGHT = 1080/2 # Altura da tela
+WIDTH = int(1920*0.75) # Largura da tela
+HEIGHT = int(1080*0.75) # Altura da tela
 FPS = 60 # Frames por segundo
 TILE_SIZE = 60 # Tamanho de cada tile (cada tile é um quadrado) 
 

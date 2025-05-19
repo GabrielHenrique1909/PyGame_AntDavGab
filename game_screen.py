@@ -8,6 +8,7 @@ def game_screen(window):
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()
     assets = load_assets()
+    world_sprites = pygame.sprite.Group()
     MAP = [
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
@@ -33,6 +34,7 @@ def game_screen(window):
                 tile = Tile(assets[BLOCO], row, column)
                 all_sprites.add(tile)
                 blocks.add(tile)
+                world_sprites.add(tile)
      # Criando o jogador
     player = Player(groups, assets)
     all_sprites.add(player)
@@ -62,19 +64,15 @@ def game_screen(window):
                     keys_down[event.key] = True
                     if event.key == pygame.K_LEFT:
                         if isinstance(player.current_form, Xlr8):
-                            player.speedx -= 7
-                            print(player.speedx)
+                            player.speedx = -7
                         else:
-                            player.speedx -= 3
-                            print(player.speedx)
+                            player.speedx = -3
                         player.last_dir = -1
                     if event.key == pygame.K_RIGHT:
                         if isinstance(player.current_form, Xlr8):
-                            player.speedx += 7
-                            print(player.speedx)
+                            player.speedx = 7
                         else:
-                            print(player.speedx)
-                            player.speedx += 3
+                            player.speedx = 3
                         player.last_dir = 1
                     if event.key == pygame.K_UP:
                         player.jump()
@@ -90,11 +88,27 @@ def game_screen(window):
                     # Dependendo da tecla, altera a velocidade.
                     if event.key in keys_down and keys_down[event.key]:
                         if event.key == pygame.K_LEFT:
-                            player.speedx = 0
+                            if player.speedx < 0:
+                                player.speedx = 0
                         if event.key == pygame.K_RIGHT:
-                            player.speedx = 0
+                            if player.speedx > 0:
+                                player.speedx = 0
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
+
+        for block in world_sprites:
+            block.speedx = -player.speedx
+        
+        # Atualiza a posição da imagem de fundo.
+        background_rect = assets[BACKGROUND].get_rect()
+        background_rect.x -= player.speedx
+        # Se o fundo saiu da janela, faz ele voltar para dentro.
+        # Verifica se o fundo saiu para a esquerda
+        if background_rect.right < 0:
+            background_rect.x += background_rect.width
+        # Verifica se o fundo saiu para a direita
+        if background_rect.left >= WIDTH:
+            background_rect.x -= background_rect.width
 
         player.handle_keys(assets)
         player.update()
@@ -102,7 +116,16 @@ def game_screen(window):
 
         # ----- Gera saídas
         window.fill(BLACK)  # Preenche com a cor branca
-        window.blit(assets[BACKGROUND], (0, 0))
+        window.blit(assets[BACKGROUND], background_rect)
+        # Desenhamos a imagem novamente, mas deslocada em x.
+        background_rect2 = background_rect.copy()
+        if background_rect.left > 0:
+            # Precisamos desenhar o fundo à esquerda
+            background_rect2.x -= background_rect2.width
+        else:
+            # Precisamos desenhar o fundo à direita
+            background_rect2.x += background_rect2.width
+        window.blit(assets[BACKGROUND], background_rect2)
         # Desenhando meteoros
         all_sprites.draw(window)
 
