@@ -137,7 +137,7 @@ def game_screen(window):
         if background_rect.left >= WIDTH:
             background_rect.x -= background_rect.width
 
-        player.handle_keys(assets)
+        player.handle_keys(groups, assets)
         player.update()
         all_sprites.update()
 
