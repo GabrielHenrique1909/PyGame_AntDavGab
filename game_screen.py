@@ -1,11 +1,12 @@
 import pygame
 from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK
-from assets import load_assets, BACKGROUND, BLOCO
-from sprites import Player, Diamante, Tile, Enemy
+from assets import load_assets, BACKGROUND, BLOCO, TIME_FONT
+from sprites import Player, Diamante, Tile, Enemy, Xlr8
 
 def game_screen(window):
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
+    start_ticks = pygame.time.get_ticks()
     assets = load_assets()
     MAP = [
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
@@ -81,10 +82,20 @@ def game_screen(window):
                     # Dependendo da tecla, altera a velocidade.
                     keys_down[event.key] = True
                     if event.key == pygame.K_LEFT:
-                        player.speedx -= 2.05
+                        if isinstance(player.current_form, Xlr8):
+                            player.speedx -= 7
+                            print(player.speedx)
+                        else:
+                            player.speedx -= 2.05
+                            print(player.speedx)
                         player.last_dir = -1
                     if event.key == pygame.K_RIGHT:
-                        player.speedx += 2.05
+                        if isinstance(player.current_form, Xlr8):
+                            player.speedx += 7
+                            print(player.speedx)
+                        else:
+                            print(player.speedx)
+                            player.speedx += 2.05
                         player.last_dir = 1
                     if event.key == pygame.K_UP:
                         player.jump()
@@ -100,10 +111,9 @@ def game_screen(window):
                     # Dependendo da tecla, altera a velocidade.
                     if event.key in keys_down and keys_down[event.key]:
                         if event.key == pygame.K_LEFT:
-                            player.speedx += 2.05
+                            player.speedx = 0
                         if event.key == pygame.K_RIGHT:
-                            player.speedx -= 2.05
-                
+                            player.speedx = 0
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
 
@@ -116,6 +126,23 @@ def game_screen(window):
         window.blit(assets[BACKGROUND], (0, 0))
         # Desenhando meteoros
         all_sprites.draw(window)
+
+        # Cronômetro no topo da tela
+        seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+        minutes = seconds // 60
+        if minutes < 10:
+            minutes = '0' + str(int(minutes))
+        else:
+            minutes = int(minutes)
+        seconds = seconds % 60
+        if seconds < 10:
+            seconds = '0' + str(int(seconds))
+        else:
+            seconds = int(seconds)
+        text_surface = assets[TIME_FONT].render(f"{minutes}:{seconds}", True, YELLOW)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (WIDTH / 2,  10)
+        window.blit(text_surface, text_rect)
 
         pygame.display.update()  # Mostra o novo frame para o jogador
 

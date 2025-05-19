@@ -3,6 +3,7 @@ from os import path
 # Estabelece a pasta que contém as imagens de cada uma das animações dos personagens
 IMG_DIR = path.join(path.dirname(__file__), 'assets', 'img')
 BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben')
+FNT_DIR = path.join(path.dirname(__file__), 'assets', 'font')
 
 # Dados gerais do jogo.
 WIDTH = 1920 /2 # Largura da tela
