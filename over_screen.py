@@ -11,8 +11,8 @@ def over_screen(screen):
     assets = load_assets()
     # Criando botoes
     all_buttons = pygame.sprite.Group()
-    x = 396
-    y = 218
+    x = 592
+    y = 322
     # Criando o botão restart
     botaorestart = BotaoRestart(assets)
     botaorestart.rect.x = x

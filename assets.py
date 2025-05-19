@@ -48,13 +48,13 @@ def load_assets():
     assets[FIM] = pygame.transform.scale(assets[FIM], (WIDTH, HEIGHT))
     assets[RESTART_CLICADO] = pygame.image.load(os.path.join(IMG_DIR, 'restartclicado.png')).convert()
     #mudando tamanho das imagens
-    largura = assets['restart_clicado'].get_rect().width * .54
-    altura = assets['restart_clicado'].get_rect().height * .54
+    largura = assets['restart_clicado'].get_rect().width * .82
+    altura = assets['restart_clicado'].get_rect().height * .82
     assets[RESTART_CLICADO] = pygame.transform.scale(assets[RESTART_CLICADO], (largura, altura))
     assets[RESTART] = pygame.image.load(os.path.join(IMG_DIR, 'restart.png')).convert()
     #mudando tamanho das imagens
-    largura = assets['restart'].get_rect().width * .54
-    altura = assets['restart'].get_rect().height * .54
+    largura = assets['restart'].get_rect().width * .82
+    altura = assets['restart'].get_rect().height * .82
     assets[RESTART] = pygame.transform.scale(assets[RESTART], (largura, altura))
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'facing_right.png')).convert_alpha()
     assets[BEN_IMG] = pygame.transform.scale(assets['ben_image'], (BEN_WIDTH, BEN_HEIGHT))
