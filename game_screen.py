@@ -22,10 +22,14 @@ def game_screen(window):
     ]
     # Criando um grupo de meteoros
     all_sprites = pygame.sprite.Group()
-    blocks = pygame.sprite.Group()  #Pra impedir a colisão
+    blocks = pygame.sprite.Group() 
+    allenemy = pygame.sprite.Group() #Pra impedir a colisão
+    all_bullets = pygame.sprite.Group()
+
     groups = {}
     groups['all_sprites'] = all_sprites
     groups['blocks']=blocks
+    groups['enemy'] = allenemy
 
     for row in range(len(MAP)):
         for column in range(len(MAP[row])):
@@ -35,12 +39,17 @@ def game_screen(window):
                 all_sprites.add(tile)
                 blocks.add(tile)
                 world_sprites.add(tile)
+    enemy = Enemy(groups,assets)
+    all_sprites.add(enemy)            
+    allenemy.add(enemy)            
+                
      # Criando o jogador
     player = Player(groups, assets)
     all_sprites.add(player)
 
-    enemy = Enemy(groups,assets)
-    all_sprites.add(enemy)
+    
+
+
     PLAYING = 1
     state = PLAYING
 
@@ -51,11 +60,24 @@ def game_screen(window):
     while state == PLAYING:
         clock.tick(FPS)
 
+        colisoes  =  pygame.sprite.spritecollide(player, allenemy, False, pygame.sprite.collide_mask)  
+        if len(colisoes)>0:
+            state = OVER
+        for bullet in all_bullets:   
+            #verifica se a bala bateu na parede 
+            hits = pygame.sprite.spritecollide(bullet, groups['blocks'], False, pygame.sprite.collide_mask) 
+            for colision in hits:
+                bullet.kill() 
+            #verfica se matou o inimigo    
+            hits = pygame.sprite.spritecollide(bullet, groups['enemy'], True, pygame.sprite.collide_mask) 
+            for colision in hits:
+                bullet.kill() 
         # ----- Trata eventos
         for event in pygame.event.get():
             # ----- Verifica consequências
             if event.type == pygame.QUIT:
                 state = QUIT
+             
             # Só verifica o teclado se está no estado de jogo
             if state == PLAYING:
                 # Verifica se apertou alguma tecla.
@@ -66,12 +88,16 @@ def game_screen(window):
                         if isinstance(player.current_form, Xlr8):
                             player.speedx = -7
                         else:
+                            player.speedx -= 2.05
+                            print(player.speedx)
                             player.speedx = -3
                         player.last_dir = -1
                     if event.key == pygame.K_RIGHT:
                         if isinstance(player.current_form, Xlr8):
                             player.speedx = 7
                         else:
+                            print(player.speedx)
+                            player.speedx += 2.05
                             player.speedx = 3
                         player.last_dir = 1
                     if event.key == pygame.K_UP:
@@ -80,7 +106,7 @@ def game_screen(window):
                         state = OVER
                     if event.key == pygame.K_SPACE:
                         if isinstance(player.current_form, Diamante):
-                            player.current_form.shoot(player, all_sprites, assets)
+                            player.current_form.shoot(player, all_sprites, all_bullets, assets)
 
 
                 # Verifica se soltou alguma tecla.
@@ -96,6 +122,7 @@ def game_screen(window):
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
 
+        player.handle_keys(groups, assets)
         for block in world_sprites:
             block.speedx = -player.speedx
         

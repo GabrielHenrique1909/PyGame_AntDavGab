@@ -1,19 +1,21 @@
 import pygame
 import time
-from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, TILE_SIZE
+from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, TILE_SIZE, OVER
 from assets import BEN_IMG, IDLE_RIGHT, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET, ENEMY
+
 
 class Ben:
     def __init__(self, assets):
         self.image = assets[BEN_IMG]
 
 class Diamante:
-    def __init__(self, assets):
+    def __init__(self, groups ,assets):
         self.image = assets[DIAM_IMG]
         self.last_shot_time = 0
         self.shot_cooldown = 0.5
+        self.blocks = groups['blocks']
 
-    def shoot(self, player, group, assets):
+    def shoot(self, player, all_sprites, all_bullets, assets):
         now = time.time()
         if now - self.last_shot_time < self.shot_cooldown:
             return  # ainda em cooldown, não atira
@@ -25,7 +27,8 @@ class Diamante:
         if direction == -1:
             bullet_img = pygame.transform.flip(bullet_img, True, False)
         bullet = Projectile(x, y, direction, bullet_img)
-        group.add(bullet)
+        all_sprites.add(bullet)
+        all_bullets.add(bullet)
         self.last_shot_time = now  # registra o último tiro
 
 
@@ -64,13 +67,14 @@ class Player(pygame.sprite.Sprite):
         self.groups = groups
         self.assets = assets
         self.blocks = groups['blocks']
+        self.enemy = groups['enemy']
     
-    def handle_keys(self, assets):
+    def handle_keys(self,groups, assets):
         keys = pygame.key.get_pressed()
 
         # Transformações com W, A, D
         if keys[pygame.K_w]:
-            self.transform(Diamante(assets))
+            self.transform(Diamante(groups, assets))
         elif keys[pygame.K_a]:
             self.transform(Xlr8(assets))
         elif keys[pygame.K_d]:
@@ -88,7 +92,7 @@ class Player(pygame.sprite.Sprite):
 
     
     def update(self):
-        # Reverte após 1 segundo
+        # Reverte após 3 segundo
         if self.current_form != self.base_form and self.transform_time:
             if time.time() - self.transform_time >= 3:
                 self.current_form = self.base_form
@@ -143,6 +147,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
+
+        
         
     def jump(self):
         # Só pode pular se ainda não estiver pulando ou caindo
@@ -254,6 +260,7 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         if self.rect.right < 0 or self.rect.left > WIDTH:
             self.kill()
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, groups ,assets):
