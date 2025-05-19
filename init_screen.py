@@ -1,7 +1,7 @@
 import pygame
 import random
 from os import path
-from sprites import Botao
+from sprites import BotaoPlay
 from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
 from assets import load_assets
 
@@ -14,7 +14,7 @@ def init_screen(screen):
     x = 20
     y = 70
     # Criando o botão play
-    botaoplay = Botao(assets)
+    botaoplay = BotaoPlay(assets)
     botaoplay.rect.x = x
     botaoplay.rect.centery = y
     all_buttons.add(botaoplay)

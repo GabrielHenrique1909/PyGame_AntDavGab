@@ -198,7 +198,7 @@ class Idle_Right(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect()
                 self.rect.center = center
 
-class Botao(pygame.sprite.Sprite):
+class BotaoPlay(pygame.sprite.Sprite):
     def __init__(self, assets):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -220,6 +220,29 @@ class Botao(pygame.sprite.Sprite):
             self.image = self.assets['play_clicado']
         else:
             self.image = self.assets['play']
+
+class BotaoRestart(pygame.sprite.Sprite):
+    def __init__(self, assets):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.assets = assets
+        self.image = assets['restart'] # assets é um dicionário de imagens, sons e fontes 
+        self.mask = pygame.mask.from_surface(self.image)
+        #todo objeto precisa de um rect
+        # rect é a representação de retangulo feita pelo pygame
+        self.rect = self.image.get_rect()
+        # é preciso definir onde a imagem deve aparecer no jogo
+        self.rect.x = 20
+        self.rect.y = 70
+
+    def mouse_over(self, over):
+        # Toda a lógica de movimentação deve ser feita aqui
+        # Atualização da posição da nave
+        if over:
+            self.image = self.assets['restart_clicado']
+        else:
+            self.image = self.assets['restart']
 
 class Tile(pygame.sprite.Sprite):
 

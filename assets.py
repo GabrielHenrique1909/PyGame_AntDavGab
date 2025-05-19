@@ -18,6 +18,8 @@ TRANS_RIGHT = 'trans_right'
 BACKGROUND = 'background'
 INICIO = 'inicio'
 FIM = 'fim'
+RESTART = 'restart'
+RESTART_CLICADO = 'restart_clicado'
 TELA_DE_INICIO = 'tela_de_inicio'
 PLAY = 'play'
 PLAY_CLICADO = 'play_clicado'
@@ -41,8 +43,18 @@ def load_assets():
     assets[TELA_DE_INICIO] = pygame.transform.scale(assets[TELA_DE_INICIO], (WIDTH, HEIGHT))
     assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
     assets[BACKGROUND] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
-    assets[FIM] = pygame.image.load(os.path.join(IMG_DIR, 'Fim.png')).convert()
-    assets[FIM] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
+    assets[FIM] = pygame.image.load(os.path.join(IMG_DIR, 'gameover.png')).convert()
+    assets[FIM] = pygame.transform.scale(assets[FIM], (WIDTH, HEIGHT))
+    assets[RESTART_CLICADO] = pygame.image.load(os.path.join(IMG_DIR, 'restartclicado.png')).convert()
+    #mudando tamanho das imagens
+    largura = assets['restart_clicado'].get_rect().width * .54
+    altura = assets['restart_clicado'].get_rect().height * .54
+    assets[RESTART_CLICADO] = pygame.transform.scale(assets[RESTART_CLICADO], (largura, altura))
+    assets[RESTART] = pygame.image.load(os.path.join(IMG_DIR, 'restart.png')).convert()
+    #mudando tamanho das imagens
+    largura = assets['restart'].get_rect().width * .54
+    altura = assets['restart'].get_rect().height * .54
+    assets[RESTART] = pygame.transform.scale(assets[RESTART], (largura, altura))
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'facing_right.png')).convert_alpha()
     assets[BEN_IMG] = pygame.transform.scale(assets['ben_image'], (BEN_WIDTH, BEN_HEIGHT))
     assets[DIAM_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'char01.png')).convert_alpha()
