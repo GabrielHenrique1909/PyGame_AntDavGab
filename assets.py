@@ -23,6 +23,7 @@ PLAY = 'play'
 PLAY_CLICADO = 'play_clicado'
 BLOCO = 'block'
 DIAM_BULLET = 'diamante_bullet'
+ENEMY = 'enemy'
 
 def load_assets():
     assets = {}
@@ -51,6 +52,8 @@ def load_assets():
     assets[FANT_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'char03.png')).convert_alpha()
     assets[FANT_IMG] = pygame.transform.scale(assets['fantasmagórico_image'], (BEN_WIDTH, BEN_HEIGHT))
     assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert()
+    assets[ENEMY] = pygame.image.load(os.path.join(IMG_DIR, 'enemy.png')).convert_alpha()
+    assets[ENEMY] = pygame.transform.scale(assets['enemy'], (BEN_WIDTH, BEN_HEIGHT))
     hurt_anim = []
     for i in range(6):
         # Os arquivos de animação são numerados de 00 a 05

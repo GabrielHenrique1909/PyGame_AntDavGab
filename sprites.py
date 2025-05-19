@@ -1,7 +1,7 @@
 import pygame
 import time
 from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, TILE_SIZE
-from assets import BEN_IMG, IDLE_RIGHT, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET
+from assets import BEN_IMG, IDLE_RIGHT, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET, ENEMY
 
 class Ben:
     def __init__(self, assets):
@@ -252,3 +252,53 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         if self.rect.right < 0 or self.rect.left > WIDTH:
             self.kill()
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, groups ,assets):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = assets[ENEMY]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        self.rect.x = 400
+        self.rect.y = 400
+        self.speedx = 2
+        self.speedy = 0
+        self.blocks = groups['blocks']
+
+    def update(self):
+        # Atualizando a posição do meteoro
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        # Se o meteoro passar do final da tela, volta para cima e sorteia
+        # novas posições e velocidades
+        self.speedy += ACELERACAO
+        if self.speedy > 0:
+            self.state = FALLING
+            if self.rect.bottom == HEIGHT:
+                self.speedy = 0
+                self.state = STILL
+        colisoes = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
+        for collision in colisoes:
+            # Estava indo para baixo
+            if self.speedy > 0:
+                self.rect.bottom = collision.rect.top 
+                # Se colidiu com algo, para de cair
+                self.speedy = 0
+                # Atualiza o estado para parado
+                self.state = STILL
+                  
+        if self.rect.right > 700:
+            self.speedx = -2
+        if self.rect.left < 400:
+            self.speedx = 2          
+        collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
+        # Corrige a posição do personagem para antes da colisão
+        for collision in collisions:
+            # Estava indo para a direita
+            if self.speedx < 0:
+                self.rect.right = collision.rect.left + 20
+            # Estava indo para a esquerda
+            elif self.speedx < 0:
+                self.rect.left = collision.rect.right - 20         

@@ -1,7 +1,7 @@
 import pygame
 from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK
 from assets import load_assets, BACKGROUND, BLOCO
-from sprites import Player, Diamante, Tile
+from sprites import Player, Diamante, Tile, Enemy
 
 def game_screen(window):
     # Variável para o ajuste de velocidade
@@ -36,6 +36,8 @@ def game_screen(window):
     player = Player(groups, assets)
     all_sprites.add(player)
 
+    enemy = Enemy(groups,assets)
+    all_sprites.add(enemy)
     PLAYING = 1
     state = PLAYING
 
