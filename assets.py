@@ -1,6 +1,6 @@
 import pygame
 import os
-from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, IMG_DIR, BEN_DIR
+from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, IMG_DIR, BEN_DIR, FNT_DIR
 
 BEN_IMG = 'ben_image'
 DIAM_IMG = 'diamante_image'
@@ -26,6 +26,7 @@ PLAY_CLICADO = 'play_clicado'
 BLOCO = 'block'
 DIAM_BULLET = 'diamante_bullet'
 ENEMY = 'enemy'
+TIME_FONT = 'time_font'
 
 def load_assets():
     assets = {}
@@ -140,4 +141,5 @@ def load_assets():
     assets[TRANS_RIGHT] = trans_right
     assets[DIAM_BULLET] = pygame.image.load(os.path.join(IMG_DIR, 'diamante_bullet.png')).convert_alpha()
     assets[DIAM_BULLET] = pygame.transform.scale(assets[DIAM_BULLET], (20, 20))
+    assets[TIME_FONT] = pygame.font.Font(os.path.join(FNT_DIR, 'PressStart2P.ttf'), 28)
     return assets
