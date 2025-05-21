@@ -44,8 +44,8 @@ class Fantasmagorico:
 STILL = 0
 JUMPING = 1
 FALLING = 2
-ACELERACAO = 2
-JUMP_SIZE = 30
+ACELERACAO = 0.5
+JUMP_SIZE = 15
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
@@ -62,6 +62,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.centerx = WIDTH / 2
         self.rect.centery = HEIGHT / 2
+        self.worldx = 0
         self.speedy = 0
         self.speedx = 0
         self.groups = groups
@@ -71,7 +72,10 @@ class Player(pygame.sprite.Sprite):
     
     def handle_keys(self,groups, assets):
         keys = pygame.key.get_pressed()
-
+        if keys[pygame.K_RIGHT]:
+            self.worldx += self.speedx
+        if keys[pygame.K_LEFT]:
+            self.worldx += self.speedx     
         # Transformações com W, A, D
         if keys[pygame.K_w]:
             self.transform(Diamante(groups, assets))
@@ -79,6 +83,7 @@ class Player(pygame.sprite.Sprite):
             self.transform(Xlr8(assets))
         elif keys[pygame.K_d]:
             self.transform(Fantasmagorico(assets))
+
 
     def transform(self, new_form):
         now = time.time()
@@ -116,9 +121,9 @@ class Player(pygame.sprite.Sprite):
                 # Se colidiu com algo, para de cair
                 self.speedy = 0
                 # Atualiza o estado para parado
-                self.state = STILL
+                self.state = STILL   
             # Estava indo para cima
-            elif self.speedy < 0:
+            elif self.speedy < 0 and not isinstance(self.current_form, Fantasmagorico):
                 self.rect.top = collision.rect.bottom - 12
                 # Se colidiu com algo, para de cair
                 self.speedy = 0
@@ -136,10 +141,10 @@ class Player(pygame.sprite.Sprite):
         # Corrige a posição do personagem para antes da colisão
         for collision in collisions:
             # Estava indo para a direita
-            if self.speedx > 0:
+            if self.speedx > 0 and not isinstance(self.current_form, Fantasmagorico):
                 self.rect.right = collision.rect.left + 20
             # Estava indo para a esquerda
-            elif self.speedx < 0:
+            elif self.speedx < 0 and not isinstance(self.current_form, Fantasmagorico):
                 self.rect.left = collision.rect.right - 20
 
         # Mantem dentro da tela
@@ -321,7 +326,7 @@ class Enemy(pygame.sprite.Sprite):
                 # Atualiza o estado para parado
                 self.state = STILL
                   
-        if self.rect.right > 700:
+        if self.rect.right > 900:
             self.speedx = -2
         if self.rect.left < 400:
             self.speedx = 2          

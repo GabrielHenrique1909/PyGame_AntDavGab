@@ -10,15 +10,15 @@ def game_screen(window):
     assets = load_assets()
     world_sprites = pygame.sprite.Group()
     MAP = [
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, EMPTY, EMPTY, EMPTY, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK],
     ]
     # Criando um grupo de meteoros
     all_sprites = pygame.sprite.Group()
@@ -39,18 +39,39 @@ def game_screen(window):
                 all_sprites.add(tile)
                 blocks.add(tile)
                 world_sprites.add(tile)
-    enemy = Enemy(groups,assets)
-    enemy.rect.x = 600  # Ajuste para longe do player
-    enemy.rect.y = 300  # Ajuste conforme necessário
-    all_sprites.add(enemy)            
-    allenemy.add(enemy)            
+    
+    for i in range(7):
+        enemy = Enemy(groups,assets)
+        if i == 0:
+            enemy.rect.x = 600  # Ajuste para longe do player
+            enemy.rect.y = 300  # Ajuste conforme necessário
+        if i == 1:
+            enemy.rect.x = 650  # Ajuste para longe do player
+            enemy.rect.y = 300  # Ajuste conforme necessário 
+        if i ==2:
+            enemy.rect.x = 700  # Ajuste para longe do player
+            enemy.rect.y = 300  # Ajuste conforme necessário 
+        if i ==3:
+            enemy.rect.x = 750  # Ajuste para longe do player
+            enemy.rect.y = 300  # Ajuste conforme necessário 
+        if i ==4:
+            enemy.rect.x = 1400  # Ajuste para longe do player
+            enemy.rect.y = 300  # Ajuste conforme necessário 
+        if i ==5:
+            enemy.rect.x = 1600  # Ajuste para longe do player
+            enemy.rect.y = 300  # Ajuste conforme necessário 
+        if i == 6:
+            enemy.rect.x = 1000  # Ajuste para longe do player
+            enemy.rect.y = 300  # Ajuste conforme necessário                       
+        all_sprites.add(enemy)            
+        allenemy.add(enemy)            
                 
      # Criando o jogador
     player = Player(groups, assets)
     player.rect.x = 100  # Longe do inimigo
     player.rect.y = 300  # Ajuste conforme necessário
     all_sprites.add(player)
-    player.world_x = player.rect.x
+    
 
     PLAYING = 1
     state = PLAYING
@@ -73,7 +94,9 @@ def game_screen(window):
             #verfica se matou o inimigo    
             hits = pygame.sprite.spritecollide(bullet, groups['enemy'], True, pygame.sprite.collide_mask) 
             for colision in hits:
-                bullet.kill() 
+                bullet.kill()         
+        if player.rect.y>700:
+            state = OVER        
         # ----- Trata eventos
         for event in pygame.event.get():
             # ----- Verifica consequências
@@ -127,16 +150,16 @@ def game_screen(window):
         player.handle_keys(groups, assets)
         player.update()
 
-        player.world_x = player.rect.x
+
 
         background_img = assets[BACKGROUND]
         background_width = background_img.get_width()
-
+  
 
         offset_x = player.rect.centerx - WIDTH // 2
         offset_y = 0
         
-        scroll_x = player.world_x % background_width
+        scroll_x = player.worldx % background_width
         for x in range(-background_width, WIDTH + background_width, background_width):
             window.blit(background_img, (x - scroll_x, 0))
 
