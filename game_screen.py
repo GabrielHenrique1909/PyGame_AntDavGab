@@ -40,15 +40,17 @@ def game_screen(window):
                 blocks.add(tile)
                 world_sprites.add(tile)
     enemy = Enemy(groups,assets)
+    enemy.rect.x = 600  # Ajuste para longe do player
+    enemy.rect.y = 300  # Ajuste conforme necessário
     all_sprites.add(enemy)            
     allenemy.add(enemy)            
                 
      # Criando o jogador
     player = Player(groups, assets)
+    player.rect.x = 100  # Longe do inimigo
+    player.rect.y = 300  # Ajuste conforme necessário
     all_sprites.add(player)
-
-    
-
+    player.world_x = player.rect.x
 
     PLAYING = 1
     state = PLAYING
@@ -89,16 +91,12 @@ def game_screen(window):
                             player.speedx = -7
                         else:
                             player.speedx -= 2.05
-                            print(player.speedx)
-                            player.speedx = -3
                         player.last_dir = -1
                     if event.key == pygame.K_RIGHT:
                         if isinstance(player.current_form, Xlr8):
                             player.speedx = 7
                         else:
-                            print(player.speedx)
                             player.speedx += 2.05
-                            player.speedx = 3
                         player.last_dir = 1
                     if event.key == pygame.K_UP:
                         player.jump()
@@ -125,35 +123,34 @@ def game_screen(window):
         player.handle_keys(groups, assets)
         for block in world_sprites:
             block.speedx = -player.speedx
-        
-        # Atualiza a posição da imagem de fundo.
-        background_rect = assets[BACKGROUND].get_rect()
-        background_rect.x -= player.speedx
-        # Se o fundo saiu da janela, faz ele voltar para dentro.
-        # Verifica se o fundo saiu para a esquerda
-        if background_rect.right < 0:
-            background_rect.x += background_rect.width
-        # Verifica se o fundo saiu para a direita
-        if background_rect.left >= WIDTH:
-            background_rect.x -= background_rect.width
 
         player.handle_keys(groups, assets)
         player.update()
-        all_sprites.update()
 
-        # ----- Gera saídas
-        window.fill(BLACK)  # Preenche com a cor branca
-        window.blit(assets[BACKGROUND], background_rect)
-        # Desenhamos a imagem novamente, mas deslocada em x.
-        background_rect2 = background_rect.copy()
-        if background_rect.left > 0:
-            # Precisamos desenhar o fundo à esquerda
-            background_rect2.x -= background_rect2.width
-        else:
-            # Precisamos desenhar o fundo à direita
-            background_rect2.x += background_rect2.width
-        window.blit(assets[BACKGROUND], background_rect2)
-        # Desenhando meteoros
+        player.world_x = player.rect.x
+
+        background_img = assets[BACKGROUND]
+        background_width = background_img.get_width()
+
+
+        offset_x = player.rect.centerx - WIDTH // 2
+        offset_y = 0
+        
+        scroll_x = player.world_x % background_width
+        for x in range(-background_width, WIDTH + background_width, background_width):
+            window.blit(background_img, (x - scroll_x, 0))
+
+        for sprite in world_sprites:
+            sprite.rect.x -= offset_x
+        for enemy in allenemy:
+            enemy.rect.x -= offset_x
+        for bullet in all_bullets:
+            bullet.rect.x -= offset_x
+
+        player.rect.centerx = WIDTH // 2
+
+        all_sprites.update()
+        
         all_sprites.draw(window)
 
         # Cronômetro no topo da tela
