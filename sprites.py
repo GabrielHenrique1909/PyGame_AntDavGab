@@ -51,6 +51,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
         pygame.sprite.Sprite.__init__(self)
         self.state = STILL
+        self.colided = False
         self.last_dir = 1  # Começa olhando para a direita
         self.last_transform_time = 0  # tempo da última transformação revertida
         self.transform_cooldown = 3  # segundos de espera após transformação
@@ -72,10 +73,11 @@ class Player(pygame.sprite.Sprite):
     
     def handle_keys(self,groups, assets):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]:
-            self.worldx += self.speedx
-        if keys[pygame.K_LEFT]:
-            self.worldx += self.speedx     
+        if self.colided == False:
+            if keys[pygame.K_RIGHT]:
+                self.worldx += self.speedx
+            if keys[pygame.K_LEFT]:
+                self.worldx += self.speedx     
         # Transformações com W, A, D
         if keys[pygame.K_w]:
             self.transform(Diamante(groups, assets))
@@ -139,13 +141,16 @@ class Player(pygame.sprite.Sprite):
         # Se colidiu com algum bloco, volta para o ponto antes da colisão
         collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         # Corrige a posição do personagem para antes da colisão
+        self.colided = False
         for collision in collisions:
             # Estava indo para a direita
             if self.speedx > 0 and not isinstance(self.current_form, Fantasmagorico):
                 self.rect.right = collision.rect.left + 20
+                self.colided = True
             # Estava indo para a esquerda
             elif self.speedx < 0 and not isinstance(self.current_form, Fantasmagorico):
                 self.rect.left = collision.rect.right - 20
+                self.colided = True
 
         # Mantem dentro da tela
         if self.rect.right > WIDTH:
