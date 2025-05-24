@@ -4,6 +4,7 @@ from os import path
 IMG_DIR = path.join(path.dirname(__file__), 'assets', 'img')
 BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben')
 FNT_DIR = path.join(path.dirname(__file__), 'assets', 'font')
+SND_DIR = path.join(path.dirname(__file__), 'assets', 'snd') # Pasta para sons
 
 # Dados gerais do jogo.
 WIDTH = int(1920*0.75) # Largura da tela
@@ -25,9 +26,16 @@ YELLOW = (255, 255, 0)
 
 # Estados para controle do fluxo da aplicação
 INIT = 0
-GAME = 1
-QUIT = 2
+INSTRUCTIONS = 1
+GAME = 2
 OVER = 3
+WIN = 4
+QUIT = 5
 
+# Tipos de Tile
 BLOCK = 0
 EMPTY = -1
+WIN_BLOCK_TYPE = 1 #Bloco de vitória
+
+# Arquivo de High Scores (Ranking)
+HIGH_SCORE_FILE = "high_scores.txt"
