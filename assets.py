@@ -77,7 +77,7 @@ def load_assets():
     assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert()
     assets[ENEMY] = pygame.image.load(os.path.join(IMG_DIR, 'enemy.png')).convert_alpha()
     assets[ENEMY] = pygame.transform.scale(assets['enemy'], (BEN_WIDTH, BEN_HEIGHT))
-    assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'win_background.png')).convert()
+    assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'instrucoes.jpg')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.transform.scale(assets[INSTRUCTIONS_IMG], (WIDTH, HEIGHT))
     assets[WIN_SCREEN_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'win_background.png')).convert()
     assets[WIN_SCREEN_IMG] = pygame.transform.scale(assets[WIN_SCREEN_IMG], (WIDTH, HEIGHT))
