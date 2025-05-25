@@ -2,7 +2,7 @@ import pygame
 import random
 from os import path
 from sprites import BotaoPlay
-from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
+from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, INSTRUCTIONS
 from assets import load_assets
 
 def init_screen(screen):
@@ -48,7 +48,7 @@ def init_screen(screen):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for play in all_buttons:
                     if play.rect.collidepoint(event.pos):
-                        state = GAME
+                        state = INSTRUCTIONS
                         running = False                
 
         # A cada loop, redesenha o fundo e os sprites

@@ -2,7 +2,7 @@ from os import path
 
 # Estabelece a pasta que contém as imagens de cada uma das animações dos personagens
 IMG_DIR = path.join(path.dirname(__file__), 'assets', 'img')
-BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben')
+BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben_sprites')
 FNT_DIR = path.join(path.dirname(__file__), 'assets', 'font')
 SND_DIR = path.join(path.dirname(__file__), 'assets', 'snd') # Pasta para sons
 

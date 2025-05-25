@@ -24,6 +24,8 @@ RESTART_CLICADO = 'restart_clicado'
 TELA_DE_INICIO = 'tela_de_inicio'
 PLAY = 'play'
 PLAY_CLICADO = 'play_clicado'
+PLAY2 = 'play2'
+PLAY_CLICADO2 = 'play_clicado2'
 BLOCO = 'block'
 DIAM_BULLET = 'diamante_bullet'
 ENEMY = 'enemy'
@@ -52,6 +54,14 @@ def load_assets():
     largura = assets['play_clicado'].get_rect().width * .35
     altura = assets['play_clicado'].get_rect().height * .35
     assets[PLAY_CLICADO] = pygame.transform.scale(assets[PLAY_CLICADO], (largura, altura))
+    assets[PLAY2] = pygame.image.load(os.path.join(IMG_DIR, 'Play.png')).convert()
+    largura = assets['play2'].get_rect().width * .25
+    altura = assets['play2'].get_rect().height * .25
+    assets[PLAY2] = pygame.transform.scale(assets[PLAY2], (largura, altura))
+    assets[PLAY_CLICADO2] = pygame.image.load(os.path.join(IMG_DIR, 'Play_clicado.png')).convert()
+    largura = assets['play_clicado2'].get_rect().width * .25
+    altura = assets['play_clicado2'].get_rect().height * .25
+    assets[PLAY_CLICADO2] = pygame.transform.scale(assets[PLAY_CLICADO2], (largura, altura))
     assets[TELA_DE_INICIO] = pygame.image.load(os.path.join(IMG_DIR, 'teladeinicio.jpg')).convert()
     assets[TELA_DE_INICIO] = pygame.transform.scale(assets[TELA_DE_INICIO], (WIDTH, HEIGHT))
     assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
@@ -79,10 +89,10 @@ def load_assets():
     assets[ENEMY] = pygame.transform.scale(assets['enemy'], (BEN_WIDTH, BEN_HEIGHT))
     assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'instrucoes.jpg')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.transform.scale(assets[INSTRUCTIONS_IMG], (WIDTH, HEIGHT))
-    assets[WIN_SCREEN_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'win_background.png')).convert()
-    assets[WIN_SCREEN_IMG] = pygame.transform.scale(assets[WIN_SCREEN_IMG], (WIDTH, HEIGHT))
-    assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'win_block.png')).convert_alpha() 
-    assets[WIN_BLOCK_IMG] = pygame.transform.scale(assets[WIN_BLOCK_IMG], (TILE_SIZE, TILE_SIZE * 2))
+    # assets[WIN_SCREEN_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'win_background.png')).convert()
+    # assets[WIN_SCREEN_IMG] = pygame.transform.scale(assets[WIN_SCREEN_IMG], (WIDTH, HEIGHT))
+    # assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'win_block.png')).convert_alpha() 
+    # assets[WIN_BLOCK_IMG] = pygame.transform.scale(assets[WIN_BLOCK_IMG], (TILE_SIZE, TILE_SIZE * 2))
 
     # Carregar novas imagens com fallback
     font_fallback_path = os.path.join(FNT_DIR, 'PressStart2P.ttf') # Caminho para a fonte de fallback
@@ -100,10 +110,10 @@ def load_assets():
         WIN_SOUND: 'win.wav',
         BTN_CLICK_SOUND: 'btn_click.wav'
     }
-    for sound_key, file_name in sound_files.items():
-        assets[sound_key] = pygame.mixer.Sound(os.path.join(SND_DIR, file_name))
-    # Música de fundo (carregada como path, tocada com pygame.mixer.music)
-    assets[BACKGROUND_MUSIC] = os.path.join(SND_DIR, 'background_music.ogg')
+    # for sound_key, file_name in sound_files.items():
+    #     assets[sound_key] = pygame.mixer.Sound(os.path.join(SND_DIR, file_name))
+    # # Música de fundo (carregada como path, tocada com pygame.mixer.music)
+    # assets[BACKGROUND_MUSIC] = os.path.join(SND_DIR, 'background_music.ogg')
     
     hurt_anim = []
     for i in range(6):
