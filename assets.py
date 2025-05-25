@@ -86,8 +86,7 @@ def load_assets():
     altura = assets['restart'].get_rect().height * .82
     assets[RESTART] = pygame.transform.scale(assets[RESTART], (largura, altura))
     assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert()
-    assets[BLOCO] = pygame.transform.scale(assets[BLOCO], (TILE_SIZE, TILE_SIZE))
-    assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
+    assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'instrucoes.jpg')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.transform.scale(assets[INSTRUCTIONS_IMG], (WIDTH, HEIGHT))
     assets[WIN_SCREEN_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
     assets[WIN_SCREEN_IMG] = pygame.transform.scale(assets[WIN_SCREEN_IMG], (WIDTH, HEIGHT))
