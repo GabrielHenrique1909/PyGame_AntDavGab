@@ -2,7 +2,13 @@ from os import path
 
 # Estabelece a pasta que contém as imagens de cada uma das animações dos personagens
 IMG_DIR = path.join(path.dirname(__file__), 'assets', 'img')
-BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben')
+BEN_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'ben_sprites')
+DIAM_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'diamante_sprites')
+ENEMY_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'enemy_sprites')
+XLR8_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'xlr8_sprites')
+FANT_DIR = path.join(path.dirname(__file__), 'assets', 'img', 'fantasma_sprites')
+
+# Estabelece a pasta que contém as fontes e sons do jogo
 FNT_DIR = path.join(path.dirname(__file__), 'assets', 'font')
 SND_DIR = path.join(path.dirname(__file__), 'assets', 'snd') # Pasta para sons
 
