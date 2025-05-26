@@ -51,8 +51,11 @@ class Diamante:
 
     def shoot(self, player, all_sprites, all_bullets, assets):
         now = time.time()
+        # This line was problematic: self.animation = [self.state]
+        # It was setting self.animation to a list containing only the state ID, not the animation frames.
+        # It should be:
         self.state = SHOOTING
-        self.animation = [self.state]
+        self.animation = self.animations[self.state] # Ensure animation is set correctly here
         if now - self.last_shot_time < self.shot_cooldown:
             return  # ainda em cooldown, não atira
 
@@ -141,15 +144,35 @@ class Player(pygame.sprite.Sprite):
         self.last_update = pygame.time.get_ticks()
 
         # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
-        self.frame_ticks = 300
-    
+        self.frame_ticks = 100 # Changed to a faster tick for smoother animation
+
+
     def handle_keys(self,groups, assets):
         keys = pygame.key.get_pressed()
+        # Reset speedx and state for new key presses
+        self.speedx = 0
+        if self.state != JUMPING and self.state != FALLING: # Only set to IDLE if not jumping/falling
+            self.state = IDLE
+
         if self.colided == False:
             if keys[pygame.K_RIGHT]:
-                self.worldx += self.speedx
+                if isinstance(self.current_form, Xlr8):
+                    self.speedx = 7
+                else:
+                    self.speedx = 2.05  # Adjusted for consistency with current code
+                self.last_dir = 1
+                self.state = RUNNING # Set state to RUNNING
             if keys[pygame.K_LEFT]:
-                self.worldx += self.speedx     
+                if isinstance(self.current_form, Xlr8):
+                    self.speedx = -7
+                else:
+                    self.speedx = -2.05 # Adjusted for consistency with current code
+                self.last_dir = -1
+                self.state = RUNNING # Set state to RUNNING
+
+        if keys[pygame.K_UP]:
+            self.jump()
+
         # Transformações com W, A, D
         if keys[pygame.K_w]:
             self.transform(Diamante(groups, assets))
@@ -167,156 +190,124 @@ class Player(pygame.sprite.Sprite):
 
         self.current_form = new_form
         self.transform_time = now
-        self.image = self.current_form.image
-        self.state = self.current_form.state
+        # When transforming, immediately update the image, state, and animations
+        self.state = TRANSFORMING # Set state to TRANSFORMING
         self.animations = self.current_form.animations
+        self.animation = self.animations[self.state]
+        self.frame = 0 # Reset frame for new animation
+        self.image = self.animation[self.frame]
 
-    
+
     def update(self):
-        # Reverte após 3 segundo
+        # Handle transformation cooldown and revert
         if self.current_form != self.base_form and self.transform_time:
             if time.time() - self.transform_time >= 3:
                 self.current_form = self.base_form
                 self.transform_time = None
-                self.image = self.current_form.image
-                self.state = self.current_form.state
+                self.last_transform_time = time.time()  # Start the cooldown for the base form
+                # When reverting, reset to IDLE and update animations
+                self.state = IDLE
                 self.animations = self.current_form.animations
-                self.last_transform_time = time.time()  # Começa o cooldown
+                self.animation = self.animations[self.state]
+                self.frame = 0 # Reset frame for new animation
+                self.image = self.animation[self.frame]
 
+
+        # Gravity and vertical movement
         self.speedy += ACELERACAO
-        if self.speedy > 0:
-            self.state = FALLING
-            if self.rect.bottom == HEIGHT:
-                self.speedy = 0
-                self.state = STILL
+        if self.speedy > 0 and self.state != FALLING:
+            self.state = FALLING # Set state to FALLING when moving downwards
         self.rect.y += self.speedy
 
+        # Collision with blocks (vertical)
         colisoes = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         for collision in colisoes:
-            # Estava indo para baixo
-            if self.speedy > 0:
+            if self.speedy > 0:  # Falling
                 self.rect.bottom = collision.rect.top + 2
-                # Se colidiu com algo, para de cair
                 self.speedy = 0
-                # Atualiza o estado para parado
-                self.state = STILL   
-            # Estava indo para cima
-            elif self.speedy < 0 and not isinstance(self.current_form, Fantasmagorico):
+                if self.state == FALLING or self.state == JUMPING: # Only set to IDLE if coming from jump/fall
+                    self.state = IDLE
+            elif self.speedy < 0 and not isinstance(self.current_form, Fantasmagorico): # Jumping
                 self.rect.top = collision.rect.bottom - 12
-                # Se colidiu com algo, para de cair
                 self.speedy = 0
-                # Atualiza o estado para parado
-                self.state = STILL
+                self.state = FALLING # After hitting head on block, start falling
+
+        # Keep player within vertical bounds
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
+            self.speedy = 0
+            if self.state == FALLING or self.state == JUMPING:
+                self.state = IDLE
         if self.rect.top < 0:
             self.rect.top = 0
+            self.speedy = 0 # Stop upward movement
 
+        # Horizontal movement
         self.rect.x += self.speedx
 
-        # Se colidiu com algum bloco, volta para o ponto antes da colisão
+        # Collision with blocks (horizontal)
         collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
-        # Corrige a posição do personagem para antes da colisão
         self.colided = False
         for collision in collisions:
-            # Estava indo para a direita
-            if self.speedx > 0 and not isinstance(self.current_form, Fantasmagorico):
-                self.rect.right = collision.rect.left + 20
-                self.colided = True
-            # Estava indo para a esquerda
-            elif self.speedx < 0 and not isinstance(self.current_form, Fantasmagorico):
-                self.rect.left = collision.rect.right - 20
-                self.colided = True
+            if not isinstance(self.current_form, Fantasmagorico):
+                if self.speedx > 0:  # Moving right
+                    self.rect.right = collision.rect.left
+                    self.colided = True
+                elif self.speedx < 0:  # Moving left
+                    self.rect.left = collision.rect.right
+                    self.colided = True
+                self.speedx = 0 # Stop horizontal movement on collision
 
-        # Mantem dentro da tela
+        # Keep player within horizontal bounds
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
+            self.speedx = 0
         if self.rect.left < 0:
             self.rect.left = 0
-        
-        now = pygame.time.get_ticks()
+            self.speedx = 0
 
-        # Verifica quantos ticks se passaram desde a ultima mudança de frame.
+        # Animation Update
+        now = pygame.time.get_ticks()
         elapsed_ticks = now - self.last_update
 
-        # Se já está na hora de mudar de imagem...
+        # Update current animation based on form and state
+        # This is crucial: self.animation needs to be updated *before* checking frame length
+        self.animation = self.current_form.animations[self.state]
+
+
         if elapsed_ticks > self.frame_ticks:
-
-            # Marca o tick da nova imagem.
             self.last_update = now
-
-            # Avança um quadro.
             self.frame += 1
 
-            # Atualiza animação atual
-            self.animation = self.animations[self.state]
-            # Reinicia a animação caso o índice da imagem atual seja inválido
+            # Check if animation is finished (especially for non-looping animations like SHOOTING or TRANSFORMING)
             if self.frame >= len(self.animation):
-                self.frame = 0
-            
-            # Armazena a posição do centro da imagem
+                self.frame = 0 # Loop animation
+
+                # For one-shot animations like SHOOTING or TRANSFORMING, revert to IDLE or RUNNING
+                if self.state == SHOOTING and isinstance(self.current_form, Diamante):
+                    self.state = IDLE # Or RUNNING, depending on movement
+                    self.animation = self.current_form.animations[self.state] # Update animation immediately
+                elif self.state == TRANSFORMING:
+                    # After transforming animation, transition to idle/run of the new form
+                    self.state = IDLE # Or RUNNING
+                    self.animation = self.current_form.animations[self.state]
+
+
             center = self.rect.center
-            # Atualiza imagem atual
+            # Flip image if last direction was left
             self.image = self.animation[self.frame]
-            # Atualiza os detalhes de posicionamento
+            if self.last_dir == -1:
+                self.image = pygame.transform.flip(self.image, True, False)
             self.rect = self.image.get_rect()
             self.rect.center = center
 
-        
-        
+
     def jump(self):
-        # Só pode pular se ainda não estiver pulando ou caindo
-        if self.state == STILL:
-            self.speedy -= JUMP_SIZE
-            self.state = JUMPING
-    
-# class Idle_Right(pygame.sprite.Sprite):
-#     # Construtor da classe.
-#     def __init__(self, center, assets):
-#         # Construtor da classe mãe (Sprite).
-#         pygame.sprite.Sprite.__init__(self)
+        # Only allow jump if on the ground or falling
+        if self.speedy == 0: # This means the player is on solid ground
+            self.speedy = -JUMP_SIZE
+            self.state = JUMPING # Set state to JUMPING
 
-#         # Armazena a animação de explosão
-#         self.idle_right = assets[IDLE_RIGHT]
-
-#         # Inicia o processo de animação colocando a primeira imagem na tela.
-#         self.frame = 0  # Armazena o índice atual na animação
-#         self.image = self.idle_right[self.frame]  # Pega a primeira imagem
-#         self.rect = self.image.get_rect()
-#         self.rect.center = center  # Posiciona o centro da imagem
-
-#         # Guarda o tick da primeira imagem, ou seja, o momento em que a imagem foi mostrada
-#         self.last_update = pygame.time.get_ticks()
-
-#         # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
-#         # Quando pygame.time.get_ticks() - self.last_update > self.frame_ticks a
-#         # próxima imagem da animação será mostrada
-#         self.frame_ticks = 50
-
-#     def update(self):
-#         # Verifica o tick atual.
-#         now = pygame.time.get_ticks()
-#         # Verifica quantos ticks se passaram desde a ultima mudança de frame.
-#         elapsed_ticks = now - self.last_update
-
-#         # Se já está na hora de mudar de imagem...
-#         if elapsed_ticks > self.frame_ticks:
-#             # Marca o tick da nova imagem.
-#             self.last_update = now
-
-#             # Avança um quadro.
-#             self.frame += 1
-
-#             # Verifica se já chegou no final da animação.
-#             if self.frame == len(self.idle_right):
-#                 # Se sim, tchau explosão!
-#                 self.kill()
-#             else:
-#                 # Se ainda não chegou ao fim da explosão, troca de imagem.
-#                 center = self.rect.center
-#                 self.image = self.idle_right[self.frame]
-#                 self.rect = self.image.get_rect()
-#                 self.rect.center = center
 
 class BotaoPlay(pygame.sprite.Sprite):
     def __init__(self, assets):
@@ -324,7 +315,7 @@ class BotaoPlay(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.assets = assets
-        self.image = assets['play'] # assets é um dicionário de imagens, sons e fontes 
+        self.image = assets['play'] # assets é um dicionário de imagens, sons e fontes
         self.mask = pygame.mask.from_surface(self.image)
         #todo objeto precisa de um rect
         # rect é a representação de retangulo feita pelo pygame
@@ -347,7 +338,7 @@ class BotaoPlay2(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.assets = assets
-        self.image = assets['play2'] # assets é um dicionário de imagens, sons e fontes 
+        self.image = assets['play2'] # assets é um dicionário de imagens, sons e fontes
         self.mask = pygame.mask.from_surface(self.image)
         #todo objeto precisa de um rect
         # rect é a representação de retangulo feita pelo pygame
@@ -370,7 +361,7 @@ class BotaoRestart(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.assets = assets
-        self.image = assets['restart'] # assets é um dicionário de imagens, sons e fontes 
+        self.image = assets['restart'] # assets é um dicionário de imagens, sons e fontes
         self.mask = pygame.mask.from_surface(self.image)
         #todo objeto precisa de um rect
         # rect é a representação de retangulo feita pelo pygame
@@ -452,16 +443,16 @@ class Enemy(pygame.sprite.Sprite):
         for collision in colisoes:
             # Estava indo para baixo
             if self.speedy > 0:
-                self.rect.bottom = collision.rect.top 
+                self.rect.bottom = collision.rect.top
                 # Se colidiu com algo, para de cair
                 self.speedy = 0
                 # Atualiza o estado para parado
                 self.state = STILL
-                  
+
         if self.rect.right > 900:
             self.speedx = -2
         if self.rect.left < 400:
-            self.speedx = 2          
+            self.speedx = 2
         collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         # Corrige a posição do personagem para antes da colisão
         for collision in collisions:
@@ -470,4 +461,4 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.right = collision.rect.left + 20
             # Estava indo para a esquerda
             elif self.speedx < 0:
-                self.rect.left = collision.rect.right - 20         
+                self.rect.left = collision.rect.right - 20
