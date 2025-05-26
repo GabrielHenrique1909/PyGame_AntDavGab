@@ -158,19 +158,23 @@ class Player(pygame.sprite.Sprite):
             if keys[pygame.K_RIGHT]:
                 if isinstance(self.current_form, Xlr8):
                     self.speedx = 7
+                    self.worldx += self.speedx
                 else:
                     self.speedx = 2.05  # Adjusted for consistency with current code
+                    self.worldx += self.speedx
                 self.last_dir = 1
                 self.state = RUNNING # Set state to RUNNING
             if keys[pygame.K_LEFT]:
                 if isinstance(self.current_form, Xlr8):
                     self.speedx = -7
+                    self.worldx += self.speedx
                 else:
                     self.speedx = -2.05 # Adjusted for consistency with current code
+                    self.worldx += self.speedx
                 self.last_dir = -1
                 self.state = RUNNING # Set state to RUNNING
 
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP] and self.state == IDLE:
             self.jump()
 
         # Transformações com W, A, D
@@ -251,12 +255,14 @@ class Player(pygame.sprite.Sprite):
         for collision in collisions:
             if not isinstance(self.current_form, Fantasmagorico):
                 if self.speedx > 0:  # Moving right
-                    self.rect.right = collision.rect.left
+                    self.rect.right = collision.rect.left +20
                     self.colided = True
                 elif self.speedx < 0:  # Moving left
-                    self.rect.left = collision.rect.right
+                    self.rect.left = collision.rect.right -20
                     self.colided = True
+                self.worldx -= self.speedx    
                 self.speedx = 0 # Stop horizontal movement on collision
+                
 
         # Keep player within horizontal bounds
         if self.rect.right > WIDTH:
