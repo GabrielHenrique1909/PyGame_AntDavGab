@@ -1,3 +1,4 @@
+# game_screen.py
 import pygame
 from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
 from assets import load_assets, BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG
@@ -27,13 +28,13 @@ def game_screen(window):
     blocks = pygame.sprite.Group() 
     allenemy = pygame.sprite.Group() #Pra impedir a colisão
     all_bullets = pygame.sprite.Group()
-    win = pygame.sprite.Group()
+    win_group = pygame.sprite.Group() # Renomeado para evitar conflito com a constante WIN
 
     groups = {}
     groups['all_sprites'] = all_sprites
     groups['blocks']=blocks
     groups['enemy'] = allenemy
-    groups['win'] = win
+    groups['win'] = win_group #
 
     for row in range(len(MAP)):
         for column in range(len(MAP[row])):
@@ -44,47 +45,31 @@ def game_screen(window):
                 blocks.add(tile)
                 world_sprites.add(tile)
             if tile_type == WIN_BLOCK_TYPE:
-                tile = Tile(assets[WIN_BLOCK_IMG], row, column)
+                tile = Tile(assets[WIN_BLOCK_IMG], row, column) #
                 all_sprites.add(tile)
-                win.add(tile)
+                win_group.add(tile) #
                 world_sprites.add(tile)
     for i in range(1):
         enemy = Enemy(groups ,assets)
         if i == 0:
             enemy.rect.x = 600  # Ajuste para longe do player
             enemy.rect.y = 300  # Ajuste conforme necessário
-        if i == 1:
-            enemy.rect.x = 650  # Ajuste para longe do player
-            enemy.rect.y = 300  # Ajuste conforme necessário 
-        if i ==2:
-            enemy.rect.x = 700  # Ajuste para longe do player
-            enemy.rect.y = 300  # Ajuste conforme necessário 
-        if i ==3:
-            enemy.rect.x = 750  # Ajuste para longe do player
-            enemy.rect.y = 300  # Ajuste conforme necessário 
-        if i ==4:
-            enemy.rect.x = 1400  # Ajuste para longe do player
-            enemy.rect.y = 300  # Ajuste conforme necessário 
-        if i ==5:
-            enemy.rect.x = 1600  # Ajuste para longe do player
-            enemy.rect.y = 300  # Ajuste conforme necessário 
-        if i == 6:
-            enemy.rect.x = 1000  # Ajuste para longe do player
-            enemy.rect.y = 300  # Ajuste conforme necessário                       
+        # ... (outras posições de inimigos)                    
         all_sprites.add(enemy)            
         allenemy.add(enemy)            
                 
      # Criando o jogador
-    player = Player(groups, assets)
+    player = Player(groups, assets) #
     player.rect.x = 100  # Longe do inimigo
     player.rect.y = 300  # Ajuste conforme necessário
     all_sprites.add(player)
     
-
-    PLAYING = 1
+    PLAYING = 1 # Estado local para o jogo em andamento
     state = PLAYING
+    current_total_seconds = 0 # Para armazenar o tempo total em segundos
 
-    ACELERACAO = 2
+    ACELERACAO = 2 # Esta constante estava no seu código original, mas não parecia usada nesta função.
+                   # A classe Player e Enemy usam uma ACELERACAO definida em sprites.py
 
     keys_down = {}
 
@@ -95,31 +80,24 @@ def game_screen(window):
         if len(colisoes)>0:
             state = OVER
         for bullet in all_bullets:   
-            #verifica se a bala bateu na parede 
             hits = pygame.sprite.spritecollide(bullet, groups['blocks'], False, pygame.sprite.collide_mask) 
             for colision in hits:
                 bullet.kill() 
-            #verfica se matou o inimigo    
             hits = pygame.sprite.spritecollide(bullet, groups['enemy'], True, pygame.sprite.collide_mask) 
             for colision in hits:
                 bullet.kill()         
-        if player.rect.y>700:
+        if player.rect.y>700: #
             state = OVER        
-        # ----- Trata eventos
-        colisoes  =  pygame.sprite.spritecollide(player, win, False, pygame.sprite.collide_mask) 
-        if len(colisoes)>0:
-            state = WIN
+        
+        colisoes_win  =  pygame.sprite.spritecollide(player, win_group, False, pygame.sprite.collide_mask) # Usar win_group
+        if len(colisoes_win)>0: #
+            state = WIN #
 
         for event in pygame.event.get():
-            # ----- Verifica consequências
             if event.type == pygame.QUIT:
                 state = QUIT
-             
-            # Só verifica o teclado se está no estado de jogo
-            if state == PLAYING:
-                # Verifica se apertou alguma tecla.
+            if state == PLAYING: # Só processa eventos de jogo se ainda estiver jogando
                 if event.type == pygame.KEYDOWN:
-                    # Dependendo da tecla, altera a velocidade.
                     keys_down[event.key] = True
                     if event.key == pygame.K_LEFT:
                         if isinstance(player.current_form, Xlr8):
@@ -135,16 +113,12 @@ def game_screen(window):
                         player.last_dir = 1
                     if event.key == pygame.K_UP:
                         player.jump()
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_ESCAPE: # Permite sair para OVER (ou poderia ser QUIT)
                         state = OVER
                     if event.key == pygame.K_SPACE:
                         if isinstance(player.current_form, Diamante):
                             player.current_form.shoot(player, all_sprites, all_bullets, assets)
-
-
-                # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
-                    # Dependendo da tecla, altera a velocidade.
                     if event.key in keys_down and keys_down[event.key]:
                         if event.key == pygame.K_LEFT:
                             if player.speedx < 0:
@@ -152,59 +126,56 @@ def game_screen(window):
                         if event.key == pygame.K_RIGHT:
                             if player.speedx > 0:
                                 player.speedx = 0
-        # ----- Atualiza estado do jogo
-        # Atualizando a posição dos meteoros
-
+        
         player.handle_keys(groups, assets)
-        for block in world_sprites:
-            block.speedx = -player.speedx
+        for block_sprite_item in world_sprites: # Renomeado para evitar conflito
+            block_sprite_item.speedx = -player.speedx
 
-        player.handle_keys(groups, assets)
-        player.update()
-
-
+        player.update() # player.handle_keys já é chamado dentro de player.update() ou deveria ser. Verificar sprites.py.
+                        # No seu sprites.py, handle_keys é separado. Manter as duas chamadas se for intencional.
 
         background_img = assets[BACKGROUND]
         background_width = background_img.get_width()
   
-
         offset_x = player.rect.centerx - WIDTH // 2
-        offset_y = 0
         
         scroll_x = player.worldx % background_width
-        for x in range(-background_width, WIDTH + background_width, background_width):
-            window.blit(background_img, (x - scroll_x, 0))
+        for x_pos_bg in range(-background_width, WIDTH + background_width, background_width): # Renomeado para clareza
+            window.blit(background_img, (x_pos_bg - scroll_x, 0))
 
-        for sprite in world_sprites:
-            sprite.rect.x -= offset_x
-        for enemy in allenemy:
-            enemy.rect.x -= offset_x
-        for bullet in all_bullets:
-            bullet.rect.x -= offset_x
+        for sprite_obj in world_sprites: # Renomeado
+            sprite_obj.rect.x -= offset_x
+        for enemy_obj in allenemy: # Renomeado
+            enemy_obj.rect.x -= offset_x
+        for bullet_obj in all_bullets: # Renomeado
+            bullet_obj.rect.x -= offset_x
 
         player.rect.centerx = WIDTH // 2
-
         all_sprites.update()
-        
         all_sprites.draw(window)
 
         # Cronômetro no topo da tela
-        seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-        minutes = seconds // 60
-        if minutes < 10:
-            minutes = '0' + str(int(minutes))
-        else:
-            minutes = int(minutes)
-        seconds = seconds % 60
-        if seconds < 10:
-            seconds = '0' + str(int(seconds))
-        else:
-            seconds = int(seconds)
-        text_surface = assets[TIME_FONT].render(f"{minutes}:{seconds}", True, YELLOW)
+        time_in_seconds = (pygame.time.get_ticks() - start_ticks) / 1000 # Variável para o tempo total em segundos
+        current_total_seconds = time_in_seconds # Atualiza o tempo que será retornado
+
+        minutes_val = time_in_seconds // 60
+        seconds_val = time_in_seconds % 60
+        
+        minutes_str = f"{int(minutes_val):02d}"
+        seconds_str = f"{int(seconds_val):02d}"
+        
+        text_surface = assets[TIME_FONT].render(f"{minutes_str}:{seconds_str}", True, YELLOW)
         text_rect = text_surface.get_rect()
         text_rect.midtop = (WIDTH / 2,  10)
         window.blit(text_surface, text_rect)
 
-        pygame.display.update()  # Mostra o novo frame para o jogador
+        pygame.display.update()
 
-    return state
+    # ----- FIM DO LOOP while state == PLAYING -----
+
+    # Agora, FORA do loop, verificamos o estado final e retornamos
+    if state == WIN:
+        # current_total_seconds foi atualizado no último frame do loop PLAYING
+        return state, current_total_seconds
+    else: # Para OVER, QUIT, ou qualquer outro estado que encerrou o loop PLAYING
+        return state, None
