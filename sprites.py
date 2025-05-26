@@ -1,12 +1,34 @@
 import pygame
 import time
-from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, TILE_SIZE, OVER
+from config import WIDTH, HEIGHT, TILE_SIZE
+# Importando as imagens
 from assets import BEN_IMG, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET, ENEMY_IMG
+# Importando as animações
+from assets import HURT_BEN, IDLE_BEN, RUN_BEN, JUMP_BEN, DIAM_IDLE, DIAM_SHOOT, DIAM_TRANSFORM, DIAM_JUMP, DIAM_RUN, XLR8_IDLE, XLR8_JUMP, XLR8_RUN, XLR8_TRANSFORM, FANT_IDLE, FANT_JUMP, FANT_RUN, FANT_TRANSFORM
 
+# Definindo os estados dos personagens
+IDLE = 0
+JUMPING = 1
+FALLING = 2
+RUNNING = 3
+SHOOTING = 4
+TRANSFORMING = 5
+DYING = 6
 
 class Ben:
     def __init__(self, assets):
         self.image = assets[BEN_IMG]
+        self.state = IDLE
+        self.animations = {
+            IDLE: assets[IDLE_BEN],
+            JUMPING: assets[JUMP_BEN],
+            FALLING: assets[JUMP_BEN],
+            RUNNING: assets[RUN_BEN],
+            DYING: assets[HURT_BEN]
+        }
+        self.animation = self.animations[self.state]
+        self.frame = 0
+        self.image = self.animation[self.frame]
 
 class Diamante:
     def __init__(self, groups ,assets):
@@ -14,9 +36,23 @@ class Diamante:
         self.last_shot_time = 0
         self.shot_cooldown = 0.5
         self.blocks = groups['blocks']
+        self.state = IDLE
+        self.animations = {
+            IDLE: assets[DIAM_IDLE],
+            JUMPING: assets[DIAM_JUMP],
+            FALLING: assets[DIAM_JUMP],
+            RUNNING: assets[DIAM_RUN],
+            SHOOTING: assets[DIAM_SHOOT],
+            TRANSFORMING: assets[DIAM_TRANSFORM]
+        }
+        self.animation = self.animations[self.state]
+        self.frame = 0
+        self.image = self.animation[self.frame]
 
     def shoot(self, player, all_sprites, all_bullets, assets):
         now = time.time()
+        self.state = SHOOTING
+        self.animation = [self.state]
         if now - self.last_shot_time < self.shot_cooldown:
             return  # ainda em cooldown, não atira
 
@@ -36,10 +72,32 @@ class Diamante:
 class Xlr8:
     def __init__(self, assets):
         self.image = assets[XLR8_IMG]
+        self.state = IDLE
+        self.animations = {
+            IDLE: assets[XLR8_IDLE],
+            JUMPING: assets[XLR8_JUMP],
+            FALLING: assets[XLR8_JUMP],
+            RUNNING: assets[XLR8_RUN],
+            TRANSFORMING: assets[XLR8_TRANSFORM]
+        }
+        self.animation = self.animations[self.state]
+        self.frame = 0
+        self.image = self.animation[self.frame]
 
 class Fantasmagorico:
     def __init__(self, assets):
         self.image = assets[FANT_IMG]
+        self.state = IDLE
+        self.animations = {
+            IDLE: assets[FANT_IDLE],
+            JUMPING: assets[FANT_JUMP],
+            FALLING: assets[FANT_JUMP],
+            RUNNING: assets[FANT_RUN],
+            TRANSFORMING: assets[FANT_TRANSFORM]
+        }
+        self.animation = self.animations[self.state]
+        self.frame = 0
+        self.image = self.animation[self.frame]
 
 STILL = 0
 JUMPING = 1
@@ -70,6 +128,20 @@ class Player(pygame.sprite.Sprite):
         self.assets = assets
         self.blocks = groups['blocks']
         self.enemy = groups['enemy']
+
+        self.state = self.base_form.state
+        self.animations = self.base_form.animations
+        # Define animação atual
+        self.animation = self.animations[self.state]
+        # Inicializa o primeiro quadro da animação
+        self.frame = 0
+        self.image = self.animation[self.frame]
+        # Detalhes sobre o posicionamento.
+
+        self.last_update = pygame.time.get_ticks()
+
+        # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
+        self.frame_ticks = 300
     
     def handle_keys(self,groups, assets):
         keys = pygame.key.get_pressed()
@@ -96,6 +168,8 @@ class Player(pygame.sprite.Sprite):
         self.current_form = new_form
         self.transform_time = now
         self.image = self.current_form.image
+        self.state = self.current_form.state
+        self.animations = self.current_form.animations
 
     
     def update(self):
@@ -105,6 +179,8 @@ class Player(pygame.sprite.Sprite):
                 self.current_form = self.base_form
                 self.transform_time = None
                 self.image = self.current_form.image
+                self.state = self.current_form.state
+                self.animations = self.current_form.animations
                 self.last_transform_time = time.time()  # Começa o cooldown
 
         self.speedy += ACELERACAO
@@ -157,6 +233,34 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
+        
+        now = pygame.time.get_ticks()
+
+        # Verifica quantos ticks se passaram desde a ultima mudança de frame.
+        elapsed_ticks = now - self.last_update
+
+        # Se já está na hora de mudar de imagem...
+        if elapsed_ticks > self.frame_ticks:
+
+            # Marca o tick da nova imagem.
+            self.last_update = now
+
+            # Avança um quadro.
+            self.frame += 1
+
+            # Atualiza animação atual
+            self.animation = self.animations[self.state]
+            # Reinicia a animação caso o índice da imagem atual seja inválido
+            if self.frame >= len(self.animation):
+                self.frame = 0
+            
+            # Armazena a posição do centro da imagem
+            center = self.rect.center
+            # Atualiza imagem atual
+            self.image = self.animation[self.frame]
+            # Atualiza os detalhes de posicionamento
+            self.rect = self.image.get_rect()
+            self.rect.center = center
 
         
         

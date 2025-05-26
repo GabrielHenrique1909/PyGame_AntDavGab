@@ -3,6 +3,8 @@ import pygame
 from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
 from assets import load_assets, BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG
 from sprites import Player, Diamante, Tile, Enemy, Xlr8
+# Importa os estados do player
+from sprites import STILL, RUNNING, JUMPING, FALLING, SHOOTING, TRANSFORMING, DYING, IDLE
 
 def game_screen(window):
     # Variável para o ajuste de velocidade
@@ -100,12 +102,14 @@ def game_screen(window):
                 if event.type == pygame.KEYDOWN:
                     keys_down[event.key] = True
                     if event.key == pygame.K_LEFT:
+                        player.state = RUNNING
                         if isinstance(player.current_form, Xlr8):
                             player.speedx = -7
                         else:
                             player.speedx -= 2.05
                         player.last_dir = -1
                     if event.key == pygame.K_RIGHT:
+                        player.state = RUNNING
                         if isinstance(player.current_form, Xlr8):
                             player.speedx = 7
                         else:
@@ -113,19 +117,24 @@ def game_screen(window):
                         player.last_dir = 1
                     if event.key == pygame.K_UP:
                         player.jump()
+                        player.state = JUMPING
                     if event.key == pygame.K_ESCAPE: # Permite sair para OVER (ou poderia ser QUIT)
                         state = OVER
+                        player.state = DYING
                     if event.key == pygame.K_SPACE:
                         if isinstance(player.current_form, Diamante):
                             player.current_form.shoot(player, all_sprites, all_bullets, assets)
+                            player.state = SHOOTING
                 if event.type == pygame.KEYUP:
                     if event.key in keys_down and keys_down[event.key]:
                         if event.key == pygame.K_LEFT:
                             if player.speedx < 0:
                                 player.speedx = 0
+                                player.state = IDLE
                         if event.key == pygame.K_RIGHT:
                             if player.speedx > 0:
                                 player.speedx = 0
+                                player.state = IDLE
         
         player.handle_keys(groups, assets)
         for block_sprite_item in world_sprites: # Renomeado para evitar conflito
