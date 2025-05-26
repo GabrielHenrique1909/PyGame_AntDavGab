@@ -1,8 +1,9 @@
 import pygame
 from os import path
-from config import (IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, #
-                    HIGH_SCORE_FILE, YELLOW, WHITE, FNT_DIR, INIT, WIN) # Adicionar INIT para opção de voltar ao menu
+from config import (IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT,
+                    HIGH_SCORE_FILE, YELLOW, WHITE, FNT_DIR, INIT, WIN)
 from assets import load_assets, TIME_FONT # TIME_FONT para o título do ranking
+from sprites import BotaoRestartWin
 
 def format_time_display(total_seconds):
     """Formata o tempo total em segundos para MM:SS."""
@@ -59,6 +60,16 @@ def win_screen(screen, player_current_time): # Recebe o tempo do jogador
     else:
         final_high_scores = current_high_scores
 
+    # Criando o botao
+    all_buttons = pygame.sprite.Group()
+    x = 560
+    y = 670
+    # Criando o botão restart
+    botao_restart = BotaoRestartWin(assets)
+    botao_restart.rect.x = x
+    botao_restart.rect.centery = y
+    all_buttons.add(botao_restart)
+
     # Carrega o fundo da tela de vitória
     victory_img_path = path.join(IMG_DIR, 'victory.png') #
     try:
@@ -81,25 +92,29 @@ def win_screen(screen, player_current_time): # Recebe o tempo do jogador
 
 
     running = True
-    next_state = WIN # Estado padrão se nada mudar
 
     while running:
         clock.tick(FPS)
 
         for event in pygame.event.get():
+            # Verifica se foi fechado.
             if event.type == pygame.QUIT:
-                next_state = QUIT
+                state = QUIT
                 running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE: # Pressionar ESPAÇO para jogar novamente
-                    next_state = GAME 
-                    running = False
-                elif event.key == pygame.K_RETURN: # Pressionar ENTER para ir ao menu inicial
-                    next_state = INIT
-                    running = False
-                elif event.key == pygame.K_ESCAPE: # Pressionar ESC para sair
-                    next_state = QUIT
-                    running = False
+            
+            if event.type == pygame.MOUSEMOTION:
+                #Alterando cor do botão
+                for restart in all_buttons:
+                    if restart.rect.collidepoint(event.pos):
+                        restart.mouse_over(True)
+                    else:
+                        restart.mouse_over(False)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for restart in all_buttons:
+                    if restart.rect.collidepoint(event.pos):
+                        state = GAME
+                        running = False 
         
         screen.fill(BLACK)
         screen.blit(victory_background, victory_background_rect)
@@ -130,19 +145,8 @@ def win_screen(screen, player_current_time): # Recebe o tempo do jogador
 
             player_score_rect = player_score_surface.get_rect(center=(WIDTH / 2, player_score_y_pos ))
             screen.blit(player_score_surface, player_score_rect)
-
-            # Instruções
-            instruction_text_1 = "Pressione ESPAÇO para jogar novamente"
-            instruction_text_2 = "Pressione ENTER para o Menu Inicial ou ESC para Sair"
-            
-            inst_surf_1 = instructions_font.render(instruction_text_1, True, WHITE)
-            inst_rect_1 = inst_surf_1.get_rect(center=(WIDTH / 2, HEIGHT * 0.85))
-            screen.blit(inst_surf_1, inst_rect_1)
-
-            inst_surf_2 = instructions_font.render(instruction_text_2, True, WHITE)
-            inst_rect_2 = inst_surf_2.get_rect(center=(WIDTH / 2, HEIGHT * 0.85 + 30))
-            screen.blit(inst_surf_2, inst_rect_2)
+            all_buttons.draw(screen)
 
         pygame.display.flip()
 
-    return next_state
+    return state

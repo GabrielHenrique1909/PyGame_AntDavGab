@@ -6,19 +6,23 @@ from config import WIDTH, HEIGHT, BEN_WIDTH, BEN_HEIGHT, IMG_DIR, BEN_DIR, FNT_D
 BACKGROUND = 'background'
 INICIO = 'inicio'
 FIM = 'fim'
-RESTART = 'restart'
-RESTART_CLICADO = 'restart_clicado'
 TELA_DE_INICIO = 'tela_de_inicio'
-PLAY = 'play'
-PLAY_CLICADO = 'play_clicado'
-PLAY2 = 'play2'
-PLAY_CLICADO2 = 'play_clicado2'
 BLOCO = 'block'
 DIAM_BULLET = 'diamante_bullet'
 TIME_FONT = 'time_font'
 INSTRUCTIONS_IMG = 'instructions_img' 
 WIN_SCREEN_IMG = 'win_screen_img'     
 WIN_BLOCK_IMG = 'win_block_img'
+
+# Botões
+RESTART = 'restart'
+RESTART_CLICADO = 'restart_clicado'
+PLAY = 'play'
+PLAY_CLICADO = 'play_clicado'
+PLAY2 = 'play2'
+PLAY_CLICADO2 = 'play_clicado2'
+BOTAO_RESTART = 'botao_restart'
+BOTAO_RESTART_CLICADO = 'botao_restart_clicado'
 
 # Animações do Ben
 BEN_IMG = 'ben_image'
@@ -95,6 +99,14 @@ def load_assets():
     largura = assets['restart'].get_rect().width * .82
     altura = assets['restart'].get_rect().height * .82
     assets[RESTART] = pygame.transform.scale(assets[RESTART], (largura, altura))
+    assets[BOTAO_RESTART_CLICADO] = pygame.image.load(os.path.join(IMG_DIR, 'botaorestartclicado.png')).convert()
+    largura = assets['botao_restart_clicado'].get_rect().width * .40
+    altura = assets['botao_restart_clicado'].get_rect().height * .40
+    assets[BOTAO_RESTART_CLICADO] = pygame.transform.scale(assets[BOTAO_RESTART_CLICADO], (largura, altura))
+    assets[BOTAO_RESTART] = pygame.image.load(os.path.join(IMG_DIR, 'botaorestart.png')).convert()
+    largura = assets['botao_restart'].get_rect().width * .40
+    altura = assets['botao_restart'].get_rect().height * .40
+    assets[BOTAO_RESTART] = pygame.transform.scale(assets[BOTAO_RESTART], (largura, altura))
     assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert()
     assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'block.png')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'instrucoes.jpg')).convert()
