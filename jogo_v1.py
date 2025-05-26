@@ -1,9 +1,10 @@
 import pygame
 import random
-from config import WIDTH, HEIGHT, INIT, GAME, QUIT, OVER, INSTRUCTIONS
+from config import WIDTH, HEIGHT, INIT, GAME, QUIT, OVER, INSTRUCTIONS, WIN
 from init_screen import init_screen
 from game_screen import game_screen
 from over_screen import over_screen
+from win_screen import win_screen
 from instructions_screen import instructions_screen
 
 
@@ -22,6 +23,8 @@ while state != QUIT:
         state = game_screen(window)
     elif state == INSTRUCTIONS:
         state = instructions_screen(window)
+    elif state == WIN:
+        state = win_screen(window)    
     elif state == OVER:
         state = over_screen(window)
 

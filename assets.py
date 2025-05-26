@@ -96,11 +96,12 @@ def load_assets():
     altura = assets['restart'].get_rect().height * .82
     assets[RESTART] = pygame.transform.scale(assets[RESTART], (largura, altura))
     assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert()
+    assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'block.png')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'instrucoes.jpg')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.transform.scale(assets[INSTRUCTIONS_IMG], (WIDTH, HEIGHT))
     assets[WIN_SCREEN_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
     assets[WIN_SCREEN_IMG] = pygame.transform.scale(assets[WIN_SCREEN_IMG], (WIDTH, HEIGHT))
-    assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert_alpha() 
+    assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'winblock.png')).convert_alpha() 
     assets[WIN_BLOCK_IMG] = pygame.transform.scale(assets[WIN_BLOCK_IMG], (TILE_SIZE, TILE_SIZE * 2))
 
     # Inimigo

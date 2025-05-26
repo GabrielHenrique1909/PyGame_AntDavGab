@@ -319,7 +319,7 @@ class Projectile(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, groups ,assets):
+    def __init__(self,groups ,assets):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
