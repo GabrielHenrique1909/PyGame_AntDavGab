@@ -53,12 +53,12 @@ class Diamante:
         now = time.time()
         # This line was problematic: self.animation = [self.state]
         # It was setting self.animation to a list containing only the state ID, not the animation frames.
-        # It should be:
-        self.state = SHOOTING
-        self.animation = self.animations[self.state] # Ensure animation is set correctly here
+        # It should be:        
         if now - self.last_shot_time < self.shot_cooldown:
             return  # ainda em cooldown, não atira
 
+        self.state = SHOOTING
+        self.animation = self.animations[self.state] # Ensure animation is set correctly here
         x = player.rect.centerx
         y = player.rect.centery
         direction = player.last_dir
@@ -151,7 +151,7 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         # Reset speedx and state for new key presses
         self.speedx = 0
-        if self.state != JUMPING and self.state != FALLING: # Only set to IDLE if not jumping/falling
+        if self.state != JUMPING and self.state != FALLING and self.state != SHOOTING: # Only set to IDLE if not jumping/falling
             self.state = IDLE
 
         if self.colided == False:
@@ -219,7 +219,7 @@ class Player(pygame.sprite.Sprite):
 
         # Gravity and vertical movement
         self.speedy += ACELERACAO
-        if self.speedy > 0 and self.state != FALLING:
+        if self.speedy > ACELERACAO and self.state != FALLING:
             self.state = FALLING # Set state to FALLING when moving downwards
         self.rect.y += self.speedy
 
