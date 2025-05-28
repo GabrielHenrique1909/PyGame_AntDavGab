@@ -1,6 +1,6 @@
 import pygame
 from os import path
-from config import BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, HIGH_SCORE_FILE, YELLOW, WHITE, FNT_DIR, RED
+from config import BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, HIGH_SCORE_FILE, YELLOW, WHITE, FNT_DIR, RED, INIT
 from assets import TIME_FONT, BTN_CLICK_SOUND, WIN_SCREEN_IMG
 from sprites import BotaoRestartWin
 
@@ -124,6 +124,12 @@ def win_screen(screen, player_current_time, assets):
             if event.type == pygame.QUIT:
                 state = QUIT
                 running = False
+
+            if event.type == pygame.KEYUP:
+                # Verifica se a tecla ESC foi pressionada
+                if event.key == pygame.K_ESCAPE:
+                    state = INIT
+                    running = False
             
             if event.type == pygame.MOUSEMOTION:
                 for restart in all_buttons:

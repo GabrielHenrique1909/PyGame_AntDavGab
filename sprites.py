@@ -2,7 +2,7 @@ import pygame
 import time
 from config import WIDTH, HEIGHT, TILE_SIZE
 # Importando as imagens
-from assets import BEN_IMG, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET, ENEMY_IMG
+from assets import BEN_IMG, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET, ENEMY_IMG, STILL_ENEMY
 # Importando as animações
 from assets import HURT_BEN, IDLE_BEN, RUN_BEN, JUMP_BEN, DIAM_IDLE, DIAM_SHOOT, DIAM_TRANSFORM, DIAM_JUMP, DIAM_RUN, XLR8_IDLE, XLR8_JUMP, XLR8_RUN, XLR8_TRANSFORM, FANT_IDLE, FANT_JUMP, FANT_RUN, FANT_TRANSFORM
 # Importando os sons
@@ -623,7 +623,7 @@ class StillEnemy(pygame.sprite.Sprite):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = assets[ENEMY_IMG]
+        self.image = assets[STILL_ENEMY]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = x

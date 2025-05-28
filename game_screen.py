@@ -1,6 +1,6 @@
 # game_screen.py
 import pygame
-from config import FPS, WIDTH, YELLOW, SND_DIR, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
+from config import FPS, WIDTH, YELLOW, SND_DIR, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN, INIT
 from assets import BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG, JUMP_SOUND, ENEMY_HIT_SOUND, LOSE_SOUND, WIN_SOUND, BACKGROUND_MUSIC
 from sprites import Player, Diamante, Tile, Enemy, Xlr8, Fantasmagorico, StillEnemy
 # Importa os estados do player
@@ -161,8 +161,7 @@ def game_screen(window, assets):
                         player.state = JUMPING
                     elif event.key == pygame.K_ESCAPE:
                         assets[LOSE_SOUND].play()
-                        state = WIN
-                        player.state = DYING
+                        state = INIT
                     elif event.key == pygame.K_SPACE:
                         if isinstance(player.current_form, Diamante):
                             player.current_form.shoot(player, all_sprites, all_bullets, assets)

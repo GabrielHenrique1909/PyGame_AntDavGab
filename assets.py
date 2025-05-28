@@ -56,6 +56,7 @@ FANT_TRANSFORM = 'fant_transform_anim'
 # Animação do inimigo
 ENEMY_IMG = 'enemy_image'
 ENEMY_ANIM = 'enemy_anim'
+STILL_ENEMY = 'still_enemy'
 
 # Sons
 JUMP_SOUND = 'jump_sound'
@@ -137,6 +138,8 @@ def load_assets():
         img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
         enemy_anim.append(img)
     assets[ENEMY_ANIM] = enemy_anim
+    assets[STILL_ENEMY] = pygame.image.load(os.path.join(ENEMY_DIR, 'still_enemy.png')).convert_alpha()
+    assets[STILL_ENEMY] = pygame.transform.scale(assets[STILL_ENEMY], (BEN_WIDTH*(4/3), BEN_HEIGHT))
 
     # Ben
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'idle00.png')).convert_alpha()

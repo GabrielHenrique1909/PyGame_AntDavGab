@@ -1,6 +1,6 @@
 import pygame
 from sprites import BotaoPlay2
-from config import BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
+from config import BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, INIT
 from assets import BTN_CLICK_SOUND, MENU_MUSIC, INSTRUCTIONS_IMG
 
 def instructions_screen(screen, assets):
@@ -47,6 +47,12 @@ def instructions_screen(screen, assets):
             if event.type == pygame.QUIT:
                 state = QUIT
                 running = False
+            
+            if event.type == pygame.KEYUP:
+                # Verifica se a tecla ESC foi pressionada
+                if event.key == pygame.K_ESCAPE:
+                    state = INIT
+                    running = False
             
             if event.type == pygame.MOUSEMOTION:
                 #Alterando cor do botão

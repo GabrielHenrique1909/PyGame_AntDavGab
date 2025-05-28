@@ -47,7 +47,13 @@ def init_screen(screen, assets):
             if event.type == pygame.QUIT:
                 state = QUIT
                 running = False
-            
+                
+            if event.type == pygame.KEYUP:
+                # Verifica se a tecla ESC foi pressionada
+                if event.key == pygame.K_ESCAPE:
+                    state = QUIT
+                    running = False
+
             if event.type == pygame.MOUSEMOTION:
                 #Alterando cor do botão
                 for play in all_buttons:

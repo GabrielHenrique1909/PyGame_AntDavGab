@@ -1,6 +1,6 @@
 import pygame
 from sprites import BotaoRestart
-from config import BLACK, FPS, GAME, QUIT
+from config import BLACK, FPS, GAME, QUIT, INIT
 from assets import BTN_CLICK_SOUND, FIM
 
 def over_screen(screen, assets):
@@ -40,6 +40,12 @@ def over_screen(screen, assets):
             if event.type == pygame.QUIT:
                 state = QUIT
                 running = False
+
+            if event.type == pygame.KEYUP:
+                # Verifica se a tecla ESC foi pressionada
+                if event.key == pygame.K_ESCAPE:
+                    state = INIT
+                    running = False
             
             if event.type == pygame.MOUSEMOTION:
                 #Alterando cor do botão
