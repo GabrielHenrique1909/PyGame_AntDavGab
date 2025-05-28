@@ -490,41 +490,32 @@ class Enemy(pygame.sprite.Sprite):
         self.blocks = groups['blocks']
 
     def update(self):
-        # Atualizando a posição do meteoro
+        # Atualizando a posição do inimigo 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
-        # Se o meteoro passar do final da tela, volta para cima e sorteia
-        # novas posições e velocidades
         self.speedy += ACELERACAO
-        if self.speedy > 0:
-            self.state = FALLING
-            if self.rect.bottom == HEIGHT:
-                self.speedy = 0
-                self.state = STILL
+
+        #Verifica se tem colisão com o bloco para baixo
         colisoes = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
-        for collision in colisoes:
+        for colisao in colisoes:
             # Estava indo para baixo
             if self.speedy > 0:
-                self.rect.bottom = collision.rect.top
+                #Muda a posição do inimigo (faz ele subir blocos tambem)
+                self.rect.bottom = colisao.rect.top
                 # Se colidiu com algo, para de cair
                 self.speedy = 0
                 # Atualiza o estado para parado
                 self.state = STILL
+
+        #Mata o inimigo se ele cair no void        
         if self.rect.y>700:
             self.kill()
+
+        #Mantém o inimigo se movimentando para um range de 100 pixels ao redor do personagem    
         if self.rect.right > 820:
             self.speedx = -2
         if self.rect.left < 620:
             self.speedx = 2
-        collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
-        # Corrige a posição do personagem para antes da colisão
-        for collision in collisions:
-            # Estava indo para a direita
-            if self.speedx < 0:
-                self.rect.right = collision.rect.left + 20
-            # Estava indo para a esquerda
-            elif self.speedx < 0:
-                self.rect.left = collision.rect.right - 20
 
 class StillEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y, groups ,assets):
@@ -543,6 +534,8 @@ class StillEnemy(pygame.sprite.Sprite):
     def update(self):
         self.speedy += ACELERACAO
         self.rect.y += self.speedy
+
+        #Cria colisão para baixo, evitando que caia
         colisoes = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         for collision in colisoes:
             # Estava indo para baixo
@@ -552,5 +545,7 @@ class StillEnemy(pygame.sprite.Sprite):
                 self.speedy = 0
                 # Atualiza o estado para parado
                 self.state = STILL
+
+        #Mata ele se passa da tela        
         if self.rect.x<10:
             self.kill()        
