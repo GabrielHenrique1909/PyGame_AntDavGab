@@ -1,18 +1,27 @@
 # game_screen.py
 import pygame
-import os
-from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, SND_DIR, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
-from assets import BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG, BACKGROUND_MUSIC, JUMP_SOUND, ENEMY_HIT_SOUND, LOSE_SOUND, WIN_SOUND, TRANSFORM_SOUND, DETRANSFORM_SOUND
+from config import FPS, WIDTH, YELLOW, SND_DIR, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
+from assets import BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG, JUMP_SOUND, ENEMY_HIT_SOUND, LOSE_SOUND, WIN_SOUND, BACKGROUND_MUSIC
 from sprites import Player, Diamante, Tile, Enemy, Xlr8, Fantasmagorico, StillEnemy
 # Importa os estados do player
-from sprites import STILL, RUNNING, JUMPING, FALLING, SHOOTING, TRANSFORMING, DYING, IDLE
+from sprites import RUNNING, JUMPING, SHOOTING, DYING, IDLE
 
 def game_screen(window, assets):
+    """
+    Inicializa a tela de jogo.
+    Exibe o jogo, processa eventos e atualiza o estado do jogo.
+    Args:
+        window (pygame.Surface): A superfície onde o jogo será desenhado.
+        assets (dict): Dicionário contendo os recursos do jogo, como sons e imagens.
+    Returns:
+        int: O estado do jogo após a interação do usuário.
+        float: O tempo total em segundos, se o jogo foi vencido.
+    """
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()
 
-    pygame.mixer.music.load(os.path.join(SND_DIR, 'background_music.wav'))
+    pygame.mixer.music.load(assets[BACKGROUND_MUSIC])
     pygame.mixer.music.set_volume(0.65)
     pygame.mixer.music.play(-1)
 
@@ -51,7 +60,7 @@ def game_screen(window, assets):
                 blocks.add(tile)
                 world_sprites.add(tile)
             if tile_type == WIN_BLOCK_TYPE:
-                tile = Tile(assets[WIN_BLOCK_IMG], row, column) #
+                tile = Tile(assets[WIN_BLOCK_IMG], row, column)
                 all_sprites.add(tile)
                 win_group.add(tile) 
                 world_sprites.add(tile)
@@ -73,7 +82,7 @@ def game_screen(window, assets):
         allenemy.add(still)
                 
      # Criando o jogador
-    player = Player(groups, assets) #
+    player = Player(groups, assets)
     player.rect.x = 100  # Longe do inimigo
     player.rect.y = 300  # Ajuste conforme necessário
     all_sprites.add(player)
@@ -152,7 +161,7 @@ def game_screen(window, assets):
                         player.state = JUMPING
                     elif event.key == pygame.K_ESCAPE:
                         assets[LOSE_SOUND].play()
-                        state = OVER
+                        state = WIN
                         player.state = DYING
                     elif event.key == pygame.K_SPACE:
                         if isinstance(player.current_form, Diamante):
@@ -180,8 +189,7 @@ def game_screen(window, assets):
         for block_sprite_item in world_sprites: # Renomeado para evitar conflito
             block_sprite_item.speedx = -player.speedx
 
-        player.update() # player.handle_keys já é chamado dentro de player.update() ou deveria ser. Verificar sprites.py.
-                        # No seu sprites.py, handle_keys é separado. Manter as duas chamadas se for intencional.
+        player.update()
 
         background_img = assets[BACKGROUND]
         background_width = background_img.get_width()

@@ -5,7 +5,7 @@ from config import WIDTH, HEIGHT, TILE_SIZE
 from assets import BEN_IMG, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET, ENEMY_IMG
 # Importando as animações
 from assets import HURT_BEN, IDLE_BEN, RUN_BEN, JUMP_BEN, DIAM_IDLE, DIAM_SHOOT, DIAM_TRANSFORM, DIAM_JUMP, DIAM_RUN, XLR8_IDLE, XLR8_JUMP, XLR8_RUN, XLR8_TRANSFORM, FANT_IDLE, FANT_JUMP, FANT_RUN, FANT_TRANSFORM
-# Importando os sons e função
+# Importando os sons
 from assets import TRANSFORM_SOUND, DETRANSFORM_SOUND, SHOOT_SOUND
 
 # Definindo os estados dos personagens
@@ -19,6 +19,10 @@ DYING = 6
 
 class Ben:
     def __init__(self, assets):
+        '''
+        Classe que representa o personagem Ben Tennyson
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         self.image = assets[BEN_IMG]
         self.state = IDLE
         self.animations = {
@@ -34,6 +38,11 @@ class Ben:
 
 class Diamante:
     def __init__(self, groups ,assets):
+        '''
+        Classe que representa o personagem Diamante
+        groups: Dicionário de grupos do jogo, incluindo blocos e inimigos
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         self.image = assets[DIAM_IMG]
         self.last_shot_time = 0
         self.shot_cooldown = 0.5
@@ -52,13 +61,19 @@ class Diamante:
         self.image = self.animation[self.frame]
 
     def shoot(self, player, all_sprites, all_bullets, assets):
+        '''
+        Método para disparar um projétil (pequenos diamantes)
+        player: O jogador que está disparando
+        all_sprites: Grupo de todos os sprites do jogo
+        all_bullets: Grupo de todos os projéteis do jogo
+        assets: Dicionário de recursos do jogo, incluindo sons
+        '''
         now = time.time()
-        # If still in cooldown, return without shooting or playing sound
+        # Não permite disparar se o tempo desde o último disparo for menor que o cooldown
         if now - self.last_shot_time < self.shot_cooldown:
             return
 
-        # If we reach here, a shot is being fired, so play the sound now.
-        assets[SHOOT_SOUND].play() # Play sound only when a shot is successfully fired
+        assets[SHOOT_SOUND].play() # Toca o som de disparo
 
         self.state = SHOOTING
         self.animation = self.animations[self.state]
@@ -71,12 +86,16 @@ class Diamante:
         bullet = Projectile(x, y, direction, bullet_img)
         all_sprites.add(bullet)
         all_bullets.add(bullet)
-        self.last_shot_time = now  # Register the time of this shot
+        self.last_shot_time = now  # Registra o tempo do último disparo
 
 
 
 class Xlr8:
     def __init__(self, assets):
+        '''
+        Classe que representa o personagem Xlr8
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         self.image = assets[XLR8_IMG]
         self.state = IDLE
         self.animations = {
@@ -92,6 +111,10 @@ class Xlr8:
 
 class Fantasmagorico:
     def __init__(self, assets):
+        '''
+        Classe que representa o personagem Fantasmagorico
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         self.image = assets[FANT_IMG]
         self.state = IDLE
         self.animations = {
@@ -113,6 +136,11 @@ JUMP_SIZE = 15
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
+        '''
+        Classe que representa o jogador
+        groups: Dicionário de grupos do jogo, incluindo blocos e inimigos
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         pygame.sprite.Sprite.__init__(self)
         self.assets = assets
         self.state = STILL
@@ -142,19 +170,22 @@ class Player(pygame.sprite.Sprite):
         # Inicializa o primeiro quadro da animação
         self.frame = 0
         self.image = self.animation[self.frame]
-        # Detalhes sobre o posicionamento.
 
         self.last_update = pygame.time.get_ticks()
 
         # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
-        self.frame_ticks = 100 # Changed to a faster tick for smoother animation
+        self.frame_ticks = 100
 
 
     def handle_keys(self,groups):
+        '''
+        Método para lidar com as teclas pressionadas
+        groups: Dicionário de grupos do jogo, incluindo blocos e inimigos
+        '''
         keys = pygame.key.get_pressed()
-        # Reset speedx and state for new key presses
+        # Reseta a velocidade horizontal
         self.speedx = 0
-        if self.state != JUMPING and self.state != FALLING and self.state != SHOOTING: # Only set to IDLE if not jumping/falling
+        if self.state != JUMPING and self.state != FALLING and self.state != SHOOTING:
             self.state = IDLE
 
         if self.colided == False:
@@ -163,19 +194,19 @@ class Player(pygame.sprite.Sprite):
                     self.speedx = 7
                     self.worldx += self.speedx
                 else:
-                    self.speedx = 2.05  # Adjusted for consistency with current code
+                    self.speedx = 2.05
                     self.worldx += self.speedx
                 self.last_dir = 1
-                self.state = RUNNING # Set state to RUNNING
+                self.state = RUNNING
             if keys[pygame.K_LEFT]:
                 if isinstance(self.current_form, Xlr8):
                     self.speedx = -7
                     self.worldx += self.speedx
                 else:
-                    self.speedx = -2.05 # Adjusted for consistency with current code
+                    self.speedx = -2.05
                     self.worldx += self.speedx
                 self.last_dir = -1
-                self.state = RUNNING # Set state to RUNNING
+                self.state = RUNNING
 
         if keys[pygame.K_UP] and self.state == IDLE:
             self.jump()
@@ -190,6 +221,10 @@ class Player(pygame.sprite.Sprite):
 
 
     def transform(self, new_form):
+        '''
+        Método para transformar o jogador em um novo personagem
+        new_form: A nova forma para a qual o jogador deseja se transformar
+        '''
         now = time.time()
 
         # Condition 1: Prevent transformation if currently an alien and trying to transform into the same alien type.
@@ -228,50 +263,53 @@ class Player(pygame.sprite.Sprite):
         self.assets[TRANSFORM_SOUND].play()
 
         self.current_form = new_form
-        self.transform_time = now # Record the time of this new transformation
+        self.transform_time = now # Grava o tempo da transformação atual
         self.state = TRANSFORMING
         self.animations = self.current_form.animations
         self.animation = self.animations[self.state]
-        self.frame = 0 # Reset frame for new animation
+        self.frame = 0 # Reseta o quadro da animação
         self.image = self.animation[self.frame]
 
 
     def update(self):
-        # Handle transformation cooldown and revert
+        '''
+        Método para atualizar o estado do jogador
+        '''
+        # Cuida do cooldown de transformação
         if self.current_form != self.base_form and self.transform_time:
-            if time.time() - self.transform_time >= 3:
+            if time.time() - self.transform_time >= 5:  # 5 segundos de transformação
+                # Se passou o tempo de transformação, volta para a forma base
                 self.current_form = self.base_form
                 self.transform_time = None
                 self.last_transform_time = time.time()
-                self.assets[DETRANSFORM_SOUND].play()  # Start the cooldown for the base form
-                # When reverting, reset to IDLE and update animations
+                self.assets[DETRANSFORM_SOUND].play()
+                # Quando volta para a forma base, reseta o estado e animações
                 self.state = IDLE
                 self.animations = self.current_form.animations
                 self.animation = self.animations[self.state]
-                self.frame = 0 # Reset frame for new animation
+                self.frame = 0 # Reseta o quadro da animação
                 self.image = self.animation[self.frame]
 
 
-        # Gravity and vertical movement
+        # Gravidade e movimento vertical
         self.speedy += ACELERACAO
         if self.speedy > ACELERACAO and self.state != FALLING:
-            self.state = FALLING # Set state to FALLING when moving downwards
+            self.state = FALLING # Define estado como FALLING se a velocidade vertical for maior que a aceleração
         self.rect.y += self.speedy
 
-        # Collision with blocks (vertical)
+        # Colisão com blocos (vertical)
         colisoes = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         for collision in colisoes:
-            if self.speedy > 0:  # Falling
+            if self.speedy > 0:  # Caindo
                 self.rect.bottom = collision.rect.top + 2
                 self.speedy = 0
-                if self.state == FALLING or self.state == JUMPING: # Only set to IDLE if coming from jump/fall
+                if self.state == FALLING or self.state == JUMPING:
                     self.state = IDLE
-            elif self.speedy < 0 and not isinstance(self.current_form, Fantasmagorico): # Jumping
+            elif self.speedy < 0 and not isinstance(self.current_form, Fantasmagorico):
                 self.rect.top = collision.rect.bottom - 12
                 self.speedy = 0
-                self.state = FALLING # After hitting head on block, start falling
-
-        # Keep player within vertical bounds
+                self.state = FALLING # Quando colide para cima, assume que está caindo
+        # Mantém o jogador dentro dos limites verticais
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
             self.speedy = 0
@@ -279,27 +317,27 @@ class Player(pygame.sprite.Sprite):
                 self.state = IDLE
         if self.rect.top < 0:
             self.rect.top = 0
-            self.speedy = 0 # Stop upward movement
+            self.speedy = 0 # Para movimento vertical se colidir com o topo da tela
 
-        # Horizontal movement
+        # Movimento horizontal
         self.rect.x += self.speedx
 
-        # Collision with blocks (horizontal)
+        # Colisões horizontais com blocos
         collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         self.colided = False
         for collision in collisions:
             if not isinstance(self.current_form, Fantasmagorico):
-                if self.speedx > 0:  # Moving right
+                if self.speedx > 0:
                     self.rect.right = collision.rect.left +20
                     self.colided = True
-                elif self.speedx < 0:  # Moving left
+                elif self.speedx < 0:
                     self.rect.left = collision.rect.right -20
                     self.colided = True
                 self.worldx -= self.speedx    
-                self.speedx = 0 # Stop horizontal movement on collision
+                self.speedx = 0 # Para movimento horizontal se colidir com um bloco
                 
 
-        # Keep player within horizontal bounds
+        # Mantém o jogador dentro dos limites horizontais
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
             self.speedx = 0
@@ -311,8 +349,6 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         elapsed_ticks = now - self.last_update
 
-        # Update current animation based on form and state
-        # This is crucial: self.animation needs to be updated *before* checking frame length
         self.animation = self.current_form.animations[self.state]
 
 
@@ -320,22 +356,20 @@ class Player(pygame.sprite.Sprite):
             self.last_update = now
             self.frame += 1
 
-            # Check if animation is finished (especially for non-looping animations like SHOOTING or TRANSFORMING)
+            # Checa se a animação atual está completa
             if self.frame >= len(self.animation):
-                self.frame = 0 # Loop animation
+                self.frame = 0 # Loopa a animação
 
-                # For one-shot animations like SHOOTING or TRANSFORMING, revert to IDLE or RUNNING
                 if self.state == SHOOTING and isinstance(self.current_form, Diamante):
-                    self.state = IDLE # Or RUNNING, depending on movement
-                    self.animation = self.current_form.animations[self.state] # Update animation immediately
+                    self.state = IDLE
+                    self.animation = self.current_form.animations[self.state]
                 elif self.state == TRANSFORMING:
-                    # After transforming animation, transition to idle/run of the new form
-                    self.state = IDLE # Or RUNNING
+                    self.state = IDLE
                     self.animation = self.current_form.animations[self.state]
 
 
             center = self.rect.center
-            # Flip image if last direction was left
+            # Vira a imagem se necessário
             self.image = self.animation[self.frame]
             if self.last_dir == -1:
                 self.image = pygame.transform.flip(self.image, True, False)
@@ -344,21 +378,28 @@ class Player(pygame.sprite.Sprite):
 
 
     def jump(self):
-        # Only allow jump if on the ground or falling
-        if self.speedy == 0: # This means the player is on solid ground
+        '''
+        Método para fazer o jogador pular
+        '''
+        # Apenas pula se estiver no estado IDLE ou se estiver caindo
+        if self.speedy == 0:
             self.speedy = -JUMP_SIZE
-            self.state = JUMPING # Set state to JUMPING
+            self.state = JUMPING
 
 
 class BotaoPlay(pygame.sprite.Sprite):
     def __init__(self, assets):
+        '''
+        Classe que representa o botão de Play
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
         self.assets = assets
-        self.image = assets['play'] # assets é um dicionário de imagens, sons e fontes
+        self.image = assets['play']
         self.mask = pygame.mask.from_surface(self.image)
-        #todo objeto precisa de um rect
+        # todo objeto precisa de um rect
         # rect é a representação de retangulo feita pelo pygame
         self.rect = self.image.get_rect()
         # é preciso definir onde a imagem deve aparecer no jogo
@@ -366,6 +407,10 @@ class BotaoPlay(pygame.sprite.Sprite):
         self.rect.y = 70
 
     def mouse_over(self, over):
+        '''
+        Método para lidar com o mouse sobre o botão
+        over: Booleano que indica se o mouse está sobre o botão
+        '''
         # Toda a lógica de movimentação deve ser feita aqui
         # Atualização da posição da nave
         if over:
@@ -375,13 +420,17 @@ class BotaoPlay(pygame.sprite.Sprite):
 
 class BotaoPlay2(pygame.sprite.Sprite):
     def __init__(self, assets):
+        '''
+        Classe que representa o botão de Play (versão 2)
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
         self.assets = assets
         self.image = assets['play2'] # assets é um dicionário de imagens, sons e fontes
         self.mask = pygame.mask.from_surface(self.image)
-        #todo objeto precisa de um rect
+        # todo objeto precisa de um rect
         # rect é a representação de retangulo feita pelo pygame
         self.rect = self.image.get_rect()
         # é preciso definir onde a imagem deve aparecer no jogo
@@ -389,6 +438,10 @@ class BotaoPlay2(pygame.sprite.Sprite):
         self.rect.y = 70
 
     def mouse_over(self, over):
+        '''
+        Método para lidar com o mouse sobre o botão (versão 2)
+        over: Booleano que indica se o mouse está sobre o botão
+        '''
         # Toda a lógica de movimentação deve ser feita aqui
         # Atualização da posição da nave
         if over:
@@ -398,13 +451,17 @@ class BotaoPlay2(pygame.sprite.Sprite):
 
 class BotaoRestart(pygame.sprite.Sprite):
     def __init__(self, assets):
+        '''
+        Classe que representa o botão de Restart
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
         self.assets = assets
         self.image = assets['restart'] # assets é um dicionário de imagens, sons e fontes
         self.mask = pygame.mask.from_surface(self.image)
-        #todo objeto precisa de um rect
+        # todo objeto precisa de um rect
         # rect é a representação de retangulo feita pelo pygame
         self.rect = self.image.get_rect()
         # é preciso definir onde a imagem deve aparecer no jogo
@@ -412,6 +469,10 @@ class BotaoRestart(pygame.sprite.Sprite):
         self.rect.y = 70
 
     def mouse_over(self, over):
+        '''
+        Método para lidar com o mouse sobre o botão de Restart
+        over: Booleano que indica se o mouse está sobre o botão
+        '''
         # Toda a lógica de movimentação deve ser feita aqui
         # Atualização da posição da nave
         if over:
@@ -421,6 +482,10 @@ class BotaoRestart(pygame.sprite.Sprite):
 
 class BotaoRestartWin(pygame.sprite.Sprite):
     def __init__(self, assets):
+        '''
+        Classe que representa o botão de Restart na tela de vitória
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -435,6 +500,10 @@ class BotaoRestartWin(pygame.sprite.Sprite):
         self.rect.y = 70
 
     def mouse_over(self, over):
+        '''
+        Método para lidar com o mouse sobre o botão de Restart na tela de vitória
+        over: Booleano que indica se o mouse está sobre o botão
+        '''
         # Toda a lógica de movimentação deve ser feita aqui
         # Atualização da posição da nave
         if over:
@@ -446,6 +515,12 @@ class Tile(pygame.sprite.Sprite):
 
     # Construtor da classe.
     def __init__(self, tile_img, row, column):
+        '''
+        Classe que representa um tile no jogo
+        tile_img: Imagem do tile
+        row: Linha onde o tile será posicionado
+        column: Coluna onde o tile será posicionado
+        '''
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -465,6 +540,13 @@ class Tile(pygame.sprite.Sprite):
 
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, x, y, direction, image):
+        '''
+        Classe que representa um projétil disparado pelo jogador
+        x: Posição x inicial do projétil
+        y: Posição y inicial do projétil
+        direction: Direção do projétil (-1 para esquerda, 1 para direita)
+        image: Imagem do projétil
+        '''
         pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.rect = self.image.get_rect()
@@ -472,6 +554,10 @@ class Projectile(pygame.sprite.Sprite):
         self.speedx = 10 * direction
 
     def update(self):
+        '''
+        Método para atualizar a posição do projétil
+        '''
+        # Atualiza a posição do projétil
         self.rect.x += self.speedx
         if self.rect.right < 0 or self.rect.left > WIDTH:
             self.kill()
@@ -479,6 +565,11 @@ class Projectile(pygame.sprite.Sprite):
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self,groups ,assets):
+        '''
+        Classe que representa um inimigo no jogo
+        groups: Dicionário de grupos do jogo, incluindo blocos e inimigos
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -490,6 +581,9 @@ class Enemy(pygame.sprite.Sprite):
         self.blocks = groups['blocks']
 
     def update(self):
+        '''
+        Método para atualizar a posição do inimigo
+        '''
         # Atualizando a posição do inimigo 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -519,6 +613,13 @@ class Enemy(pygame.sprite.Sprite):
 
 class StillEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y, groups ,assets):
+        '''
+        Classe que representa um inimigo parado no jogo
+        x: Posição x do inimigo
+        y: Posição y do inimigo
+        groups: Dicionário de grupos do jogo, incluindo blocos e inimigos
+        assets: Dicionário de recursos do jogo, incluindo imagens e sons
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -532,6 +633,9 @@ class StillEnemy(pygame.sprite.Sprite):
         self.blocks = groups['blocks']
 
     def update(self):
+        '''
+        Método para atualizar a posição do inimigo parado
+        '''
         self.speedy += ACELERACAO
         self.rect.y += self.speedy
 

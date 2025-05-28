@@ -1,11 +1,18 @@
 import pygame
-import random
-from os import path
 from sprites import BotaoRestart
-from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
-from assets import BTN_CLICK_SOUND
+from config import BLACK, FPS, GAME, QUIT
+from assets import BTN_CLICK_SOUND, FIM
 
 def over_screen(screen, assets):
+    """
+    Tela de Game Over do jogo.
+    Exibe a tela de Game Over e permite que o jogador reinicie o jogo.
+    Args:
+        screen (pygame.Surface): A superfície onde a tela será desenhada.
+        assets (dict): Dicionário contendo os recursos do jogo, como sons e imagens.
+    Returns:
+        int: O estado do jogo após a interação do usuário.
+    """
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
     # Criando botoes
@@ -18,8 +25,7 @@ def over_screen(screen, assets):
     botaorestart.rect.centery = y
     all_buttons.add(botaorestart)
     # Carrega o fundo da tela final
-    gameover = pygame.image.load(path.join(IMG_DIR, 'gameover.png')).convert()
-    gameover = pygame.transform.scale(gameover, (WIDTH, HEIGHT))
+    gameover = assets[FIM]
     gameover_rect = gameover.get_rect()
     pygame.mixer.music.stop()
 

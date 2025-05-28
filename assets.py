@@ -70,7 +70,13 @@ BTN_CLICK_SOUND = 'btn_click_sound'
 MENU_MUSIC = 'menu_music'
 
 def load_assets():
+    '''
+    Carrega todos os assets do jogo.
+    Retorna um dicionário com os assets carregados.
+    '''
     assets = {}
+
+    # Botões
     assets[PLAY] = pygame.image.load(os.path.join(IMG_DIR, 'Play.png')).convert()
     largura = assets['play'].get_rect().width * .35
     altura = assets['play'].get_rect().height * .35
@@ -87,12 +93,6 @@ def load_assets():
     largura = assets['play_clicado2'].get_rect().width * .25
     altura = assets['play_clicado2'].get_rect().height * .25
     assets[PLAY_CLICADO2] = pygame.transform.scale(assets[PLAY_CLICADO2], (largura, altura))
-    assets[TELA_DE_INICIO] = pygame.image.load(os.path.join(IMG_DIR, 'teladeinicio.jpg')).convert()
-    assets[TELA_DE_INICIO] = pygame.transform.scale(assets[TELA_DE_INICIO], (WIDTH, HEIGHT))
-    assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
-    assets[BACKGROUND] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
-    assets[FIM] = pygame.image.load(os.path.join(IMG_DIR, 'gameover.png')).convert()
-    assets[FIM] = pygame.transform.scale(assets[FIM], (WIDTH, HEIGHT))
     assets[RESTART_CLICADO] = pygame.image.load(os.path.join(IMG_DIR, 'restartclicado.png')).convert()
     largura = assets['restart_clicado'].get_rect().width * .82
     altura = assets['restart_clicado'].get_rect().height * .82
@@ -109,14 +109,22 @@ def load_assets():
     largura = assets['botao_restart'].get_rect().width * .40
     altura = assets['botao_restart'].get_rect().height * .40
     assets[BOTAO_RESTART] = pygame.transform.scale(assets[BOTAO_RESTART], (largura, altura))
+
+    # Blocos
     assets[BLOCO] = pygame.image.load(os.path.join(IMG_DIR, 'leavesBlock.png')).convert()
-    assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'block.png')).convert()
+    assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'winblock.png')).convert_alpha()
+    assets[WIN_BLOCK_IMG] = pygame.transform.scale(assets[WIN_BLOCK_IMG], (TILE_SIZE, TILE_SIZE * 2))
+
+    # Telas
+    assets[TELA_DE_INICIO] = pygame.image.load(os.path.join(IMG_DIR, 'teladeinicio.jpg')).convert()
+    assets[TELA_DE_INICIO] = pygame.transform.scale(assets[TELA_DE_INICIO], (WIDTH, HEIGHT))
+    assets[BACKGROUND] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
+    assets[BACKGROUND] = pygame.transform.scale(assets[BACKGROUND], (WIDTH, HEIGHT))
+    assets[FIM] = pygame.image.load(os.path.join(IMG_DIR, 'gameover.png')).convert()
+    assets[FIM] = pygame.transform.scale(assets[FIM], (WIDTH, HEIGHT))
     assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'instrucoes.jpg')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.transform.scale(assets[INSTRUCTIONS_IMG], (WIDTH, HEIGHT))
-    assets[WIN_SCREEN_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'planodefundo.jpg')).convert()
-    assets[WIN_SCREEN_IMG] = pygame.transform.scale(assets[WIN_SCREEN_IMG], (WIDTH, HEIGHT))
-    assets[WIN_BLOCK_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'winblock.png')).convert_alpha() 
-    assets[WIN_BLOCK_IMG] = pygame.transform.scale(assets[WIN_BLOCK_IMG], (TILE_SIZE, TILE_SIZE * 2))
+    # Win Screen é carregado separadamente no win_screen.py
 
     # Inimigo
     assets[ENEMY_IMG] = pygame.image.load(os.path.join(ENEMY_DIR, 'run00.png')).convert_alpha()
@@ -266,6 +274,7 @@ def load_assets():
         fant_transform_anim.append(img)
     assets[FANT_TRANSFORM] = fant_transform_anim
 
+    # Sons
     sound_files = {
         JUMP_SOUND: 'jump_sound.wav',
         SHOOT_SOUND: 'shoot_sound.wav',
@@ -274,12 +283,13 @@ def load_assets():
         ENEMY_HIT_SOUND: 'enemy_hit_sound.wav',
         LOSE_SOUND: 'lose_sound.wav',
         WIN_SOUND: 'win_sound.wav',
-        BACKGROUND_MUSIC: 'background_music.wav',
-        BTN_CLICK_SOUND: 'btn_click_sound.wav',
-        MENU_MUSIC: 'menu_music.wav'
+        BTN_CLICK_SOUND: 'btn_click_sound.wav'
     }
     for sound_key, file_name in sound_files.items():
         assets[sound_key] = pygame.mixer.Sound(os.path.join(SND_DIR, file_name))
+    assets[MENU_MUSIC] = os.path.join(SND_DIR, 'menu_music.wav')
+    assets[BACKGROUND_MUSIC] = os.path.join(SND_DIR, 'background_music.wav')
     
+    # Fonte
     assets[TIME_FONT] = pygame.font.Font(os.path.join(FNT_DIR, 'PressStart2P.ttf'), 28)
     return assets

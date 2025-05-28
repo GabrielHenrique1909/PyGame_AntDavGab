@@ -1,19 +1,23 @@
 import pygame
-import os
-from os import path
 from sprites import BotaoPlay2
-from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, SND_DIR
-from assets import MENU_MUSIC, BTN_CLICK_SOUND
+from config import BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
+from assets import BTN_CLICK_SOUND, MENU_MUSIC, INSTRUCTIONS_IMG
 
 def instructions_screen(screen, assets):
-    """Tela de instruções do jogo.
-    Exibe as instruções e um botão para iniciar o jogo.
+    """
+    Tela de instruções do jogo.
+    Exibe as instruções e um botão para voltar ao jogo.
+    Args:
+        screen (pygame.Surface): A superfície onde a tela será desenhada.
+        assets (dict): Dicionário contendo os recursos do jogo, como sons e imagens.
+    Returns:
+        int: O estado do jogo após a interação do usuário.
     """
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
 
     if not pygame.mixer.music.get_busy():
-        pygame.mixer.music.load(os.path.join(SND_DIR, 'menu_music.wav'))
+        pygame.mixer.music.load(assets[MENU_MUSIC])
         pygame.mixer.music.set_volume(0.4)
         pygame.mixer.music.play(-1)
 
@@ -28,8 +32,7 @@ def instructions_screen(screen, assets):
     all_buttons.add(botaoplay2)
 
     # Carrega o fundo da tela inicial
-    instructions_img = pygame.image.load(path.join(IMG_DIR, 'instrucoes.jpg')).convert()
-    instructions_img = pygame.transform.scale(instructions_img, (WIDTH, HEIGHT))
+    instructions_img = assets[INSTRUCTIONS_IMG]
     instructions_img_rect = instructions_img.get_rect()
 
     running = True

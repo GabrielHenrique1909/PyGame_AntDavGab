@@ -1,16 +1,22 @@
 import pygame
-import random
-import os
-from os import path
 from sprites import BotaoPlay
-from config import IMG_DIR, BLACK, FPS, SND_DIR, QUIT, WIDTH, HEIGHT, INSTRUCTIONS
-from assets import BTN_CLICK_SOUND
+from config import BLACK, FPS, QUIT, INSTRUCTIONS
+from assets import MENU_MUSIC, BTN_CLICK_SOUND, TELA_DE_INICIO
 
 def init_screen(screen, assets):
+    """
+    Inicializa a tela de início do jogo.
+    Exibe o botão de play e aguarda a interação do usuário.
+    Args:
+        screen (pygame.Surface): A superfície onde o jogo será desenhado.
+        assets (dict): Dicionário contendo os recursos do jogo, como sons e imagens.
+    Returns:
+        int: O estado do jogo após a interação do usuário.
+    """
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
 
-    pygame.mixer.music.load(os.path.join(SND_DIR, 'menu_music.wav'))
+    pygame.mixer.music.load(assets[MENU_MUSIC])
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(-1)
 
@@ -26,8 +32,7 @@ def init_screen(screen, assets):
     all_buttons.add(botaoplay)
 
     # Carrega o fundo da tela inicial
-    tela_de_inicio = pygame.image.load(path.join(IMG_DIR, 'teladeinicio.jpg')).convert()
-    tela_de_inicio = pygame.transform.scale(tela_de_inicio, (WIDTH, HEIGHT))
+    tela_de_inicio = assets[TELA_DE_INICIO]
     tela_de_inicio_rect = tela_de_inicio.get_rect()
 
     running = True

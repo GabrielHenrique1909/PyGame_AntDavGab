@@ -1,12 +1,17 @@
 import pygame
 from os import path
-from config import (IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT,
-                    HIGH_SCORE_FILE, YELLOW, WHITE, FNT_DIR, INIT, WIN)
+from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, HIGH_SCORE_FILE, YELLOW, WHITE, FNT_DIR
 from assets import TIME_FONT, BTN_CLICK_SOUND
 from sprites import BotaoRestartWin
 
 def format_time_display(total_seconds):
-    """Formata o tempo total em segundos para MM:SS."""
+    '''
+    Formata o tempo total em segundos para o formato MM:SS.
+    Args:
+        total_seconds (float): Tempo total em segundos.
+    Returns:
+        str: Tempo formatado como "MM:SS". Retorna "N/A" se total_seconds for None.
+    '''
     if total_seconds is None:
         return "N/A"
     minutes = int(total_seconds // 60)
@@ -14,7 +19,12 @@ def format_time_display(total_seconds):
     return f"{minutes:02d}:{seconds:02d}"
 
 def load_player_high_scores():
-    """Carrega os high scores do arquivo."""
+    """
+    Carrega os high scores do arquivo e retorna uma lista ordenada.
+    Se o arquivo não existir ou houver erro, retorna uma lista vazia.
+    Returns:
+        list: Lista de high scores ordenada do menor para o maior.
+    """
     if not path.exists(HIGH_SCORE_FILE): # HIGH_SCORE_FILE de config.py
         return []
     try:
@@ -27,7 +37,15 @@ def load_player_high_scores():
         return []
 
 def save_player_high_scores(scores_list, new_player_score):
-    """Adiciona novo score, mantém os top 5 e salva no arquivo."""
+    """
+    Salva o novo score do jogador na lista de high scores.
+    Se o novo score for None, não o adiciona.
+    Args:
+        scores_list (list): Lista de high scores já carregada.
+        new_player_score (float): Tempo do novo jogador a ser adicionado.
+    Returns:
+        list: Lista atualizada dos top 5 high scores.
+    """
     if new_player_score is not None:
         scores_list.append(new_player_score)
     
@@ -46,7 +64,17 @@ def save_player_high_scores(scores_list, new_player_score):
         return scores_list[:5] if new_player_score is not None and new_player_score in scores_list else scores_list
 
 
-def win_screen(screen, player_current_time, assets): # Recebe o tempo do jogador
+def win_screen(screen, player_current_time, assets):
+    """
+    Tela de vitória do jogo.
+    Exibe o ranking dos melhores tempos e permite que o jogador reinicie o jogo.
+    Args:
+        screen (pygame.Surface): A superfície onde a tela será desenhada.
+        player_current_time (float): Tempo do jogador atual, se houver.
+        assets (dict): Dicionário contendo os recursos do jogo, como sons e imagens.
+    Returns:
+        int: O estado do jogo após a interação do usuário.
+    """
     clock = pygame.time.Clock()
 
     pygame.mixer.music.stop()
@@ -89,8 +117,6 @@ def win_screen(screen, player_current_time, assets): # Recebe o tempo do jogador
     # Para os scores individuais, usa a mesma família de fonte, mas pode ser um tamanho diferente
     font_file_path = path.join(FNT_DIR, 'PressStart2P.ttf') # Arquivo da fonte
     individual_score_font = pygame.font.Font(font_file_path, 24) # Tamanho um pouco menor para a lista
-    instructions_font = pygame.font.Font(font_file_path, 20)
-
 
     running = True
 
