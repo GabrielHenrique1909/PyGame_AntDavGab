@@ -124,7 +124,8 @@ def load_assets():
     assets[FIM] = pygame.transform.scale(assets[FIM], (WIDTH, HEIGHT))
     assets[INSTRUCTIONS_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'instrucoes.jpg')).convert()
     assets[INSTRUCTIONS_IMG] = pygame.transform.scale(assets[INSTRUCTIONS_IMG], (WIDTH, HEIGHT))
-    # Win Screen é carregado separadamente no win_screen.py
+    assets[WIN_SCREEN_IMG] = pygame.image.load(os.path.join(IMG_DIR, 'victory.png')).convert()
+    assets[WIN_SCREEN_IMG] = pygame.transform.scale(assets[WIN_SCREEN_IMG], (WIDTH, HEIGHT))
 
     # Inimigo
     assets[ENEMY_IMG] = pygame.image.load(os.path.join(ENEMY_DIR, 'run00.png')).convert_alpha()
