@@ -17,7 +17,9 @@ Movimentação: Setas esquerda e direita para andar; Seta cima para pular; Alter
 
 Pontuação: Os cinco menores tempos obtidos ficam fixados na tela final.
 
-Formas de perder o jogo: Entrar em contato com um inimigo ou cair da plataforma. 
+Formas de perder o jogo: Entrar em contato com um inimigo ou cair da plataforma.
+
+Para iniciar o jogo, execute o arquivo chamado **jogo_v1.py**.
 
 #### Jogo inspirado em:
 
