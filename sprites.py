@@ -486,7 +486,6 @@ class Enemy(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.inicialx = x
         self.speedx = 2
         self.speedy = 0
         self.blocks = groups['blocks']
@@ -512,10 +511,11 @@ class Enemy(pygame.sprite.Sprite):
                 self.speedy = 0
                 # Atualiza o estado para parado
                 self.state = STILL
-
-        if self.rect.right > 900:
+        if self.rect.y>700:
+            self.kill()
+        if self.rect.right > 820:
             self.speedx = -2
-        if self.rect.left < 600:
+        if self.rect.left < 620:
             self.speedx = 2
         collisions = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
         # Corrige a posição do personagem para antes da colisão
@@ -526,3 +526,30 @@ class Enemy(pygame.sprite.Sprite):
             # Estava indo para a esquerda
             elif self.speedx < 0:
                 self.rect.left = collision.rect.right - 20
+
+class StillEnemy(pygame.sprite.Sprite):
+    def __init__(self, x, y, groups ,assets):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = assets[ENEMY_IMG]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speedx = 0
+        self.speedy = 0
+        self.blocks = groups['blocks']
+
+    def update(self):
+        self.speedy += ACELERACAO
+        self.rect.y += self.speedy
+        colisoes = pygame.sprite.spritecollide(self, self.blocks, False, pygame.sprite.collide_mask)
+        for collision in colisoes:
+            # Estava indo para baixo
+            if self.speedy > 0:
+                self.rect.bottom = collision.rect.top
+                # Se colidiu com algo, para de cair
+                self.speedy = 0
+                # Atualiza o estado para parado
+                self.state = STILL

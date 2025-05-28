@@ -3,7 +3,7 @@ import pygame
 import os
 from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, SND_DIR, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
 from assets import BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG, BACKGROUND_MUSIC, JUMP_SOUND, ENEMY_HIT_SOUND, LOSE_SOUND, WIN_SOUND, TRANSFORM_SOUND, DETRANSFORM_SOUND
-from sprites import Player, Diamante, Tile, Enemy, Xlr8, Fantasmagorico
+from sprites import Player, Diamante, Tile, Enemy, Xlr8, Fantasmagorico, StillEnemy
 # Importa os estados do player
 from sprites import STILL, RUNNING, JUMPING, FALLING, SHOOTING, TRANSFORMING, DYING, IDLE
 
@@ -59,11 +59,24 @@ def game_screen(window, assets):
     for i in range(1):
         enemy = Enemy(600, groups ,assets)
         if i == 0:
-            enemy.rect.x = 600  # Ajuste para longe do player
+            enemy.rect.x = 700  # Ajuste para longe do player
             enemy.rect.y = 300  # Ajuste conforme necessário
         # ... (outras posições de inimigos)                    
         all_sprites.add(enemy)            
         allenemy.add(enemy)            
+
+        still = StillEnemy(780,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still)
+        still = StillEnemy(1140,400,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still)
+        still = StillEnemy(1500,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still)
+        still = StillEnemy(2000,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still)   
                 
      # Criando o jogador
     player = Player(groups, assets) #
@@ -79,7 +92,16 @@ def game_screen(window, assets):
 
     while state == PLAYING:
         clock.tick(FPS)
-
+        time_in_seconds = int((pygame.time.get_ticks() - start_ticks) / 1000)
+        if time_in_seconds % 5 == 0 and time_in_seconds != 0 and newenemy == False:
+            enemy = Enemy(600, groups ,assets)
+            enemy.rect.x = 600  # Ajuste para perto do player
+            enemy.rect.y = 300  # Ajuste conforme necessário               
+            all_sprites.add(enemy)            
+            allenemy.add(enemy) 
+            newenemy = True
+        if (time_in_seconds + 1) % 5 == 0:
+            newenemy = False    
         colisoes  =  pygame.sprite.spritecollide(player, allenemy, False, pygame.sprite.collide_mask)  
         if len(colisoes)>0:
             assets[LOSE_SOUND].play()
