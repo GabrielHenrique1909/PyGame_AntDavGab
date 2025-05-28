@@ -2,7 +2,7 @@ import pygame
 from os import path
 from config import (IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT,
                     HIGH_SCORE_FILE, YELLOW, WHITE, FNT_DIR, INIT, WIN)
-from assets import load_assets, TIME_FONT # TIME_FONT para o título do ranking
+from assets import TIME_FONT, BTN_CLICK_SOUND
 from sprites import BotaoRestartWin
 
 def format_time_display(total_seconds):
@@ -46,9 +46,10 @@ def save_player_high_scores(scores_list, new_player_score):
         return scores_list[:5] if new_player_score is not None and new_player_score in scores_list else scores_list
 
 
-def win_screen(screen, player_current_time): # Recebe o tempo do jogador
+def win_screen(screen, player_current_time, assets): # Recebe o tempo do jogador
     clock = pygame.time.Clock()
-    assets = load_assets()
+
+    pygame.mixer.music.stop()
 
     # Carrega os scores existentes
     current_high_scores = load_player_high_scores()
@@ -113,6 +114,7 @@ def win_screen(screen, player_current_time): # Recebe o tempo do jogador
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for restart in all_buttons:
                     if restart.rect.collidepoint(event.pos):
+                        assets[BTN_CLICK_SOUND].play()
                         state = GAME
                         running = False 
         

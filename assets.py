@@ -61,11 +61,13 @@ ENEMY_ANIM = 'enemy_anim'
 JUMP_SOUND = 'jump_sound'
 SHOOT_SOUND = 'shoot_sound'
 TRANSFORM_SOUND = 'transform_sound'
+DETRANSFORM_SOUND = 'detransform_sound'
 ENEMY_HIT_SOUND = 'enemy_hit_sound'
-PLAYER_DIE_SOUND = 'player_die_sound'
-WIN_SOUND = 'win_sound'             # Som para quando o jogador vence
+LOSE_SOUND = 'lose_sound'
+WIN_SOUND = 'win_sound'
 BACKGROUND_MUSIC = 'background_music'
-BTN_CLICK_SOUND = 'btn_click_sound'   # Som para cliques em botões
+BTN_CLICK_SOUND = 'btn_click_sound'
+MENU_MUSIC = 'menu_music'
 
 def load_assets():
     assets = {}
@@ -264,33 +266,20 @@ def load_assets():
         fant_transform_anim.append(img)
     assets[FANT_TRANSFORM] = fant_transform_anim
 
-
-    # # Carregar novas imagens com fallback
-    # font_fallback_path = os.path.join(FNT_DIR, 'PressStart2P.ttf') # Caminho para a fonte de fallback
-    # # Carregar sons (com fallback para DummySound)
-    # class DummySound:
-    #     def play(self): pass
-    #     def stop(self): pass # Adicionado para consistência com pygame.mixer.music
-    #     def fadeout(self, time): pass # Adicionado para consistência
-    # sound_files = {
-    #     JUMP_SOUND: 'jump.wav',
-    #     SHOOT_SOUND: 'shoot.wav',
-    #     TRANSFORM_SOUND: 'transform.wav',
-    #     ENEMY_HIT_SOUND: 'enemy_hit.wav',
-    #     PLAYER_DIE_SOUND: 'player_die.wav',
-    #     WIN_SOUND: 'win.wav',
-    #     BTN_CLICK_SOUND: 'btn_click.wav'
-    # }
-    # for sound_key, file_name in sound_files.items():
-    #     assets[sound_key] = pygame.mixer.Sound(os.path.join(SND_DIR, file_name))
-    # # Música de fundo (carregada como path, tocada com pygame.mixer.music)
-    # assets[BACKGROUND_MUSIC] = os.path.join(SND_DIR, 'background_music.wav')
+    sound_files = {
+        JUMP_SOUND: 'jump_sound.wav',
+        SHOOT_SOUND: 'shoot_sound.wav',
+        TRANSFORM_SOUND: 'transform_sound.wav',
+        DETRANSFORM_SOUND: 'detransform_sound.wav',
+        ENEMY_HIT_SOUND: 'enemy_hit_sound.wav',
+        LOSE_SOUND: 'lose_sound.wav',
+        WIN_SOUND: 'win_sound.wav',
+        BACKGROUND_MUSIC: 'background_music.wav',
+        BTN_CLICK_SOUND: 'btn_click_sound.wav',
+        MENU_MUSIC: 'menu_music.wav'
+    }
+    for sound_key, file_name in sound_files.items():
+        assets[sound_key] = pygame.mixer.Sound(os.path.join(SND_DIR, file_name))
     
     assets[TIME_FONT] = pygame.font.Font(os.path.join(FNT_DIR, 'PressStart2P.ttf'), 28)
     return assets
-
-# from pygame.mixer import Channel
-
-# self.channel_0 = Channel(0)
-
-# self.channel_0.play(assets[BACKGROUND_MUSIC], loops=-1)

@@ -5,6 +5,8 @@ from config import WIDTH, HEIGHT, TILE_SIZE
 from assets import BEN_IMG, DIAM_IMG, XLR8_IMG, FANT_IMG, DIAM_BULLET, ENEMY_IMG
 # Importando as animações
 from assets import HURT_BEN, IDLE_BEN, RUN_BEN, JUMP_BEN, DIAM_IDLE, DIAM_SHOOT, DIAM_TRANSFORM, DIAM_JUMP, DIAM_RUN, XLR8_IDLE, XLR8_JUMP, XLR8_RUN, XLR8_TRANSFORM, FANT_IDLE, FANT_JUMP, FANT_RUN, FANT_TRANSFORM
+# Importando os sons e função
+from assets import TRANSFORM_SOUND, DETRANSFORM_SOUND, SHOOT_SOUND
 
 # Definindo os estados dos personagens
 IDLE = 0
@@ -51,14 +53,15 @@ class Diamante:
 
     def shoot(self, player, all_sprites, all_bullets, assets):
         now = time.time()
-        # This line was problematic: self.animation = [self.state]
-        # It was setting self.animation to a list containing only the state ID, not the animation frames.
-        # It should be:        
+        # If still in cooldown, return without shooting or playing sound
         if now - self.last_shot_time < self.shot_cooldown:
-            return  # ainda em cooldown, não atira
+            return
+
+        # If we reach here, a shot is being fired, so play the sound now.
+        assets[SHOOT_SOUND].play() # Play sound only when a shot is successfully fired
 
         self.state = SHOOTING
-        self.animation = self.animations[self.state] # Ensure animation is set correctly here
+        self.animation = self.animations[self.state]
         x = player.rect.centerx
         y = player.rect.centery
         direction = player.last_dir
@@ -68,7 +71,7 @@ class Diamante:
         bullet = Projectile(x, y, direction, bullet_img)
         all_sprites.add(bullet)
         all_bullets.add(bullet)
-        self.last_shot_time = now  # registra o último tiro
+        self.last_shot_time = now  # Register the time of this shot
 
 
 
@@ -111,12 +114,13 @@ JUMP_SIZE = 15
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
         pygame.sprite.Sprite.__init__(self)
+        self.assets = assets
         self.state = STILL
         self.colided = False
         self.last_dir = 1  # Começa olhando para a direita
         self.last_transform_time = 0  # tempo da última transformação revertida
         self.transform_cooldown = 3  # segundos de espera após transformação
-        self.base_form = Ben(assets)
+        self.base_form = Ben(self.assets)
         self.current_form = self.base_form
         self.transform_time = None
         self.image = self.base_form.image
@@ -128,7 +132,6 @@ class Player(pygame.sprite.Sprite):
         self.speedy = 0
         self.speedx = 0
         self.groups = groups
-        self.assets = assets
         self.blocks = groups['blocks']
         self.enemy = groups['enemy']
 
@@ -147,7 +150,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_ticks = 100 # Changed to a faster tick for smoother animation
 
 
-    def handle_keys(self,groups, assets):
+    def handle_keys(self,groups):
         keys = pygame.key.get_pressed()
         # Reset speedx and state for new key presses
         self.speedx = 0
@@ -179,23 +182,54 @@ class Player(pygame.sprite.Sprite):
 
         # Transformações com W, A, D
         if keys[pygame.K_w]:
-            self.transform(Diamante(groups, assets))
+            self.transform(Diamante(groups, self.assets))
         elif keys[pygame.K_a]:
-            self.transform(Xlr8(assets))
+            self.transform(Xlr8(self.assets))
         elif keys[pygame.K_d]:
-            self.transform(Fantasmagorico(assets))
+            self.transform(Fantasmagorico(self.assets))
 
 
     def transform(self, new_form):
         now = time.time()
-        # Já está transformado OU ainda está no cooldown
-        if self.current_form != self.base_form or now - self.last_transform_time < self.transform_cooldown:
-            return  # Bloqueia nova transformação
+
+        # Condition 1: Prevent transformation if currently an alien and trying to transform into the same alien type.
+        # This explicitly checks if the *object itself* is the same or if the *type* is the same.
+        if self.current_form is new_form: # Check if it's literally the same object instance (unlikely for new_form)
+            return
+        if type(self.current_form) is type(new_form): # Check if they are of the exact same class type
+            return
+
+        # Condition 2: Allow transformation if currently Ben.
+        # Condition 3: If already transformed (not Ben), require reverting to Ben first.
+        # Condition 4: Respect the cooldown after reverting to Ben.
+        if self.current_form != self.base_form: # If currently an alien (not Ben)
+            # You can only transform to another alien if you first revert to Ben.
+            # So, if current_form is an alien, and new_form is also an alien (and not Ben), block it.
+            # The previous logic "now - self.last_transform_time < self.transform_cooldown" handles cooldown after detransform.
+            # So if current_form is alien, and new_form is different alien, we should block directly unless specifically allowed.
+            # The intention here is usually: Ben -> Alien1, Alien1 -> Ben, Ben -> Alien2. Not Alien1 -> Alien2 directly.
+            # Your current setup already prevents Alien1 -> Alien2 because 'now - self.last_transform_time < self.transform_cooldown'
+            # will be true if you are already an alien and haven't detransformed.
+
+            # Let's simplify this: if already an alien, and the new form is also an alien, and you haven't detransformed, don't allow.
+            # The cooldown on 'last_transform_time' only applies *after* returning to base_form.
+            # So, if current_form is not base_form, and you are trying to transform to *any* new_form (even a different alien),
+            # this means you haven't reverted to Ben yet, which is typically a design choice.
+            if self.transform_time is not None: # If you are currently in a transformation phase (non-Ben)
+                # And you haven't reverted yet, then you cannot transform again.
+                return
+
+        # Handle cooldown specifically for when returning *from* a transformation
+        # This check is for transforming *into* an alien from Ben, after a previous detransformation.
+        if now - self.last_transform_time < self.transform_cooldown:
+            return  # Blocks transformation if still on cooldown after a previous detransformation
+
+        # If all checks pass, then a valid transformation is occurring. Play the sound.
+        self.assets[TRANSFORM_SOUND].play()
 
         self.current_form = new_form
-        self.transform_time = now
-        # When transforming, immediately update the image, state, and animations
-        self.state = TRANSFORMING # Set state to TRANSFORMING
+        self.transform_time = now # Record the time of this new transformation
+        self.state = TRANSFORMING
         self.animations = self.current_form.animations
         self.animation = self.animations[self.state]
         self.frame = 0 # Reset frame for new animation
@@ -208,7 +242,8 @@ class Player(pygame.sprite.Sprite):
             if time.time() - self.transform_time >= 3:
                 self.current_form = self.base_form
                 self.transform_time = None
-                self.last_transform_time = time.time()  # Start the cooldown for the base form
+                self.last_transform_time = time.time()
+                self.assets[DETRANSFORM_SOUND].play()  # Start the cooldown for the base form
                 # When reverting, reset to IDLE and update animations
                 self.state = IDLE
                 self.animations = self.current_form.animations

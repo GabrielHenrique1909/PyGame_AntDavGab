@@ -3,12 +3,11 @@ import random
 from os import path
 from sprites import BotaoRestart
 from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT
-from assets import load_assets
+from assets import BTN_CLICK_SOUND
 
-def over_screen(screen):
+def over_screen(screen, assets):
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
-    assets = load_assets()
     # Criando botoes
     all_buttons = pygame.sprite.Group()
     x = 592
@@ -47,6 +46,7 @@ def over_screen(screen):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for restart in all_buttons:
                     if restart.rect.collidepoint(event.pos):
+                        assets[BTN_CLICK_SOUND].play()
                         state = GAME
                         running = False    
 

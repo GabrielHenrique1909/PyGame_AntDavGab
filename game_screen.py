@@ -1,16 +1,21 @@
 # game_screen.py
 import pygame
-from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, RED, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
-from assets import load_assets, BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG
-from sprites import Player, Diamante, Tile, Enemy, Xlr8
+import os
+from config import FPS, WIDTH, HEIGHT, BLACK, YELLOW, SND_DIR, QUIT, OVER, EMPTY, BLOCK, WIN_BLOCK_TYPE, WIN
+from assets import BACKGROUND, BLOCO, TIME_FONT, WIN_BLOCK_IMG, BACKGROUND_MUSIC, JUMP_SOUND, ENEMY_HIT_SOUND, LOSE_SOUND, WIN_SOUND, TRANSFORM_SOUND, DETRANSFORM_SOUND
+from sprites import Player, Diamante, Tile, Enemy, Xlr8, Fantasmagorico
 # Importa os estados do player
 from sprites import STILL, RUNNING, JUMPING, FALLING, SHOOTING, TRANSFORMING, DYING, IDLE
 
-def game_screen(window):
+def game_screen(window, assets):
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
     start_ticks = pygame.time.get_ticks()
-    assets = load_assets()
+
+    pygame.mixer.music.load(os.path.join(SND_DIR, 'background_music.wav'))
+    pygame.mixer.music.set_volume(0.65)
+    pygame.mixer.music.play(-1)
+
     world_sprites = pygame.sprite.Group()
     a1 = [BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK] * 5
     
@@ -70,9 +75,6 @@ def game_screen(window):
     state = PLAYING
     current_total_seconds = 0 # Para armazenar o tempo total em segundos
 
-    ACELERACAO = 2 # Esta constante estava no seu código original, mas não parecia usada nesta função.
-                   # A classe Player e Enemy usam uma ACELERACAO definida em sprites.py
-
     keys_down = {}
 
     while state == PLAYING:
@@ -80,6 +82,7 @@ def game_screen(window):
 
         colisoes  =  pygame.sprite.spritecollide(player, allenemy, False, pygame.sprite.collide_mask)  
         if len(colisoes)>0:
+            assets[LOSE_SOUND].play()
             state = OVER
         for bullet in all_bullets:   
             hits = pygame.sprite.spritecollide(bullet, groups['blocks'], False, pygame.sprite.collide_mask) 
@@ -87,13 +90,16 @@ def game_screen(window):
                 bullet.kill() 
             hits = pygame.sprite.spritecollide(bullet, groups['enemy'], True, pygame.sprite.collide_mask) 
             for colision in hits:
+                assets[ENEMY_HIT_SOUND].play()
                 bullet.kill()         
-        if player.rect.y>700: #
+        if player.rect.y>700:
+            assets[LOSE_SOUND].play()
             state = OVER        
         
         colisoes_win  =  pygame.sprite.spritecollide(player, win_group, False, pygame.sprite.collide_mask) # Usar win_group
-        if len(colisoes_win)>0: #
-            state = WIN #
+        if len(colisoes_win)>0:
+            assets[WIN_SOUND].play()
+            state = WIN
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -108,35 +114,44 @@ def game_screen(window):
                         else:
                             player.speedx -= 2.05
                         player.last_dir = -1
-                    if event.key == pygame.K_RIGHT:
+                    elif event.key == pygame.K_RIGHT:
                         player.state = RUNNING
                         if isinstance(player.current_form, Xlr8):
                             player.speedx = 7
                         else:
                             player.speedx += 2.05
                         player.last_dir = 1
-                    if event.key == pygame.K_UP:
+                    elif event.key == pygame.K_UP:
                         player.jump()
+                        assets[JUMP_SOUND].play()
                         player.state = JUMPING
-                    if event.key == pygame.K_ESCAPE: # Permite sair para OVER (ou poderia ser QUIT)
+                    elif event.key == pygame.K_ESCAPE:
+                        assets[LOSE_SOUND].play()
                         state = OVER
                         player.state = DYING
-                    if event.key == pygame.K_SPACE:
+                    elif event.key == pygame.K_SPACE:
                         if isinstance(player.current_form, Diamante):
                             player.current_form.shoot(player, all_sprites, all_bullets, assets)
                             player.state = SHOOTING
+                    elif event.key == pygame.K_w:
+                        player.transform(Diamante(groups, assets))
+                    elif event.key == pygame.K_a:
+                        player.transform(Xlr8(assets))
+                    elif event.key == pygame.K_d:
+                        player.transform(Fantasmagorico(assets))
+                        
                 if event.type == pygame.KEYUP:
                     if event.key in keys_down and keys_down[event.key]:
                         if event.key == pygame.K_LEFT:
                             if player.speedx < 0:
                                 player.speedx = 0
                                 player.state = IDLE
-                        if event.key == pygame.K_RIGHT:
+                        elif event.key == pygame.K_RIGHT:
                             if player.speedx > 0:
                                 player.speedx = 0
                                 player.state = IDLE
         
-        player.handle_keys(groups, assets)
+        player.handle_keys(groups)
         for block_sprite_item in world_sprites: # Renomeado para evitar conflito
             block_sprite_item.speedx = -player.speedx
 
@@ -181,7 +196,7 @@ def game_screen(window):
         pygame.display.update()
 
     # ----- FIM DO LOOP while state == PLAYING -----
-
+    pygame.mixer.music.stop()
     # Agora, FORA do loop, verificamos o estado final e retornamos
     if state == WIN:
         # current_total_seconds foi atualizado no último frame do loop PLAYING

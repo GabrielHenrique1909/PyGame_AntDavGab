@@ -6,6 +6,8 @@ from game_screen import game_screen
 from over_screen import over_screen
 from win_screen import win_screen
 from instructions_screen import instructions_screen
+from assets import load_assets
+# ===== Inicialização do PyGame =====
 
 pygame.init()
 pygame.mixer.init()
@@ -13,16 +15,18 @@ pygame.mixer.init()
 # ----- Gera tela principal
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Márcio 10')
+# ----- Carrega os assets
+assets = load_assets()
 
 player_final_time = None # Variável para armazenar o tempo do jogador
 
 state = INIT
 while state != QUIT:
     if state == INIT:
-        state = init_screen(window)
+        state = init_screen(window, assets)
         player_final_time = None # Reseta o tempo ao voltar para a tela inicial
     elif state == GAME:
-        game_result = game_screen(window) # game_screen agora pode retornar uma tupla
+        game_result = game_screen(window, assets) # game_screen agora pode retornar uma tupla
         if isinstance(game_result, tuple) and len(game_result) == 2:
             state, time_val = game_result
             if state == WIN:
@@ -33,13 +37,13 @@ while state != QUIT:
             state = game_result
             player_final_time = None
     elif state == INSTRUCTIONS:
-        state = instructions_screen(window)
+        state = instructions_screen(window, assets)
         player_final_time = None # Reseta o tempo
     elif state == WIN:
         # Passa o tempo do jogador para a tela de vitória
-        state = win_screen(window, player_final_time)     
+        state = win_screen(window, player_final_time, assets)     
     elif state == OVER:
-        state = over_screen(window)
+        state = over_screen(window, assets)
         player_final_time = None # Reseta o tempo em game over
 
 # ===== Finalização =====

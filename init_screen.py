@@ -1,14 +1,19 @@
 import pygame
 import random
+import os
 from os import path
 from sprites import BotaoPlay
-from config import IMG_DIR, BLACK, FPS, GAME, QUIT, WIDTH, HEIGHT, INSTRUCTIONS
-from assets import load_assets
+from config import IMG_DIR, BLACK, FPS, SND_DIR, QUIT, WIDTH, HEIGHT, INSTRUCTIONS
+from assets import BTN_CLICK_SOUND
 
-def init_screen(screen):
+def init_screen(screen, assets):
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
-    assets = load_assets()
+
+    pygame.mixer.music.load(os.path.join(SND_DIR, 'menu_music.wav'))
+    pygame.mixer.music.set_volume(0.4)
+    pygame.mixer.music.play(-1)
+
     # Criando botoes
     all_buttons = pygame.sprite.Group()
     x = 30
@@ -48,6 +53,8 @@ def init_screen(screen):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for play in all_buttons:
                     if play.rect.collidepoint(event.pos):
+                        assets[BTN_CLICK_SOUND].play()
+                        pygame.mixer.music.stop()
                         state = INSTRUCTIONS
                         running = False                
 
