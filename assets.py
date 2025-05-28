@@ -139,7 +139,7 @@ def load_assets():
         enemy_anim.append(img)
     assets[ENEMY_ANIM] = enemy_anim
     assets[STILL_ENEMY] = pygame.image.load(os.path.join(ENEMY_DIR, 'still_enemy.png')).convert_alpha()
-    assets[STILL_ENEMY] = pygame.transform.scale(assets[STILL_ENEMY], (BEN_WIDTH*(4/3), BEN_HEIGHT))
+    assets[STILL_ENEMY] = pygame.transform.scale(assets[STILL_ENEMY], (24*(3/2), 32*(3/2)))
 
     # Ben
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'idle00.png')).convert_alpha()
