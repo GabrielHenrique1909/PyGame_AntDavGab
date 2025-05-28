@@ -17,7 +17,6 @@ def game_screen(window, assets):
     pygame.mixer.music.play(-1)
 
     world_sprites = pygame.sprite.Group()
-    a1 = [BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK] * 5
     
     MAP = [
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY]+[WIN_BLOCK_TYPE],
@@ -54,48 +53,24 @@ def game_screen(window, assets):
             if tile_type == WIN_BLOCK_TYPE:
                 tile = Tile(assets[WIN_BLOCK_IMG], row, column) #
                 all_sprites.add(tile)
-                win_group.add(tile) #
+                win_group.add(tile) 
                 world_sprites.add(tile)
-    for i in range(1):
-        enemy = Enemy(600, groups ,assets)
-        if i == 0:
-            enemy.rect.x = 700  # Ajuste para longe do player
-            enemy.rect.y = 300  # Ajuste conforme necessário
-        # ... (outras posições de inimigos)                    
-        all_sprites.add(enemy)            
-        allenemy.add(enemy)            
 
-        still = StillEnemy(780,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still)
-        still = StillEnemy(1140,400,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still)
-        still = StillEnemy(1540,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still)
-        still = StillEnemy(2000,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still) 
-        still = StillEnemy(2300,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still) 
-        still = StillEnemy(2610,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still) 
-        still = StillEnemy(2950,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still) 
-        still = StillEnemy(3230,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still) 
-        still = StillEnemy(3500,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still)
-        still = StillEnemy(4000,100,groups,assets)
-        all_sprites.add(still)            
-        allenemy.add(still)     
+    #Criação do inimigo que se move            
+    enemy = Enemy(groups ,assets)
+    enemy.rect.x = 700  # Ajuste para longe do player
+    enemy.rect.y = 300  # Ajuste conforme necessário                   
+    all_sprites.add(enemy)            
+    allenemy.add(enemy)            
 
+    #Criação de todos inimigos parados 
+    coordenadasstill = [[780,100],[1140,400],[1540,100],[2000,100],[2300,100],[2610,100],[2950,100],[3230,100],[3500,100],[4000,100]]
+    for coordenada in coordenadasstill:
+        x = coordenada[0]
+        y = coordenada[1]
+        still = StillEnemy(x,y,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still)
                 
      # Criando o jogador
     player = Player(groups, assets) #
@@ -111,9 +86,11 @@ def game_screen(window, assets):
 
     while state == PLAYING:
         clock.tick(FPS)
+
+        #Criação de inimigos atrás do personagem de 5 em 5 segundos a partir de 10s corridos
         time_in_seconds = int((pygame.time.get_ticks() - start_ticks) / 1000)
         if time_in_seconds % 5 == 0 and time_in_seconds >= 10 and newenemy == False:
-            enemy = Enemy(600, groups ,assets)
+            enemy = Enemy(groups ,assets)
             enemy.rect.x = 600  # Ajuste para perto do player
             enemy.rect.y = 300  # Ajuste conforme necessário               
             all_sprites.add(enemy)            
@@ -121,22 +98,29 @@ def game_screen(window, assets):
             newenemy = True
         if (time_in_seconds + 1) % 5 == 0:
             newenemy = False    
+
+        #Morte se o personagem encostar num inimigo     
         colisoes  =  pygame.sprite.spritecollide(player, allenemy, False, pygame.sprite.collide_mask)  
         if len(colisoes)>0:
             assets[LOSE_SOUND].play()
             state = OVER
+
+        #Analise se o tiro do diamante acertou um inimigo ou um bloco     
         for bullet in all_bullets:   
             hits = pygame.sprite.spritecollide(bullet, groups['blocks'], False, pygame.sprite.collide_mask) 
-            for colision in hits:
+            if len(hits)>0:
                 bullet.kill() 
             hits = pygame.sprite.spritecollide(bullet, groups['enemy'], True, pygame.sprite.collide_mask) 
-            for colision in hits:
+            if len(hits)>0:
                 assets[ENEMY_HIT_SOUND].play()
                 bullet.kill()         
+
+        #Morte caso o personagem caia        
         if player.rect.y>700:
             assets[LOSE_SOUND].play()
             state = OVER        
         
+        #Vitoria caso o personagem encoste no bloco de win
         colisoes_win  =  pygame.sprite.spritecollide(player, win_group, False, pygame.sprite.collide_mask) # Usar win_group
         if len(colisoes_win)>0:
             assets[WIN_SOUND].play()

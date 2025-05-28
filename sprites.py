@@ -478,14 +478,13 @@ class Projectile(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, x ,groups ,assets):
+    def __init__(self,groups ,assets):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
         self.image = assets[ENEMY_IMG]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
-        self.rect.x = x
         self.speedx = 2
         self.speedy = 0
         self.blocks = groups['blocks']
