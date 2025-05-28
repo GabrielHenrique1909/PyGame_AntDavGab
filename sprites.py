@@ -553,3 +553,5 @@ class StillEnemy(pygame.sprite.Sprite):
                 self.speedy = 0
                 # Atualiza o estado para parado
                 self.state = STILL
+        if self.rect.x<10:
+            self.kill()        

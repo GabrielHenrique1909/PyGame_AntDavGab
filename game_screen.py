@@ -71,12 +71,31 @@ def game_screen(window, assets):
         still = StillEnemy(1140,400,groups,assets)
         all_sprites.add(still)            
         allenemy.add(still)
-        still = StillEnemy(1500,100,groups,assets)
+        still = StillEnemy(1540,100,groups,assets)
         all_sprites.add(still)            
         allenemy.add(still)
         still = StillEnemy(2000,100,groups,assets)
         all_sprites.add(still)            
-        allenemy.add(still)   
+        allenemy.add(still) 
+        still = StillEnemy(2300,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still) 
+        still = StillEnemy(2610,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still) 
+        still = StillEnemy(2950,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still) 
+        still = StillEnemy(3230,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still) 
+        still = StillEnemy(3500,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still)
+        still = StillEnemy(4000,100,groups,assets)
+        all_sprites.add(still)            
+        allenemy.add(still)     
+
                 
      # Criando o jogador
     player = Player(groups, assets) #
@@ -93,7 +112,7 @@ def game_screen(window, assets):
     while state == PLAYING:
         clock.tick(FPS)
         time_in_seconds = int((pygame.time.get_ticks() - start_ticks) / 1000)
-        if time_in_seconds % 5 == 0 and time_in_seconds != 0 and newenemy == False:
+        if time_in_seconds % 5 == 0 and time_in_seconds >= 10 and newenemy == False:
             enemy = Enemy(600, groups ,assets)
             enemy.rect.x = 600  # Ajuste para perto do player
             enemy.rect.y = 300  # Ajuste conforme necessário               
