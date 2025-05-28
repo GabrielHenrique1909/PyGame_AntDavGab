@@ -26,3 +26,8 @@ Anthoni Serro, Davi Ferreira e Gabriel Henrique
 
 # Instituição:
 Insper - Engenharia - 1°A - 2025
+
+# Uso de Inteligencia Artificial: 
+ - Para plotar a tabela com os tempos recordes na Tela Win, foi usada a ajuda do Google Gemini, sendo necessárias mudanças tanto na parte jogo_v1.py quanto na win_screen. O histórico da pesquisa encontra-se no link: https://gemini.google.com/app/64b823017527a1d8?hl=pt-PT
+
+ - 

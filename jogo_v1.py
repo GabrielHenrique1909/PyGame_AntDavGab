@@ -7,14 +7,15 @@ from over_screen import over_screen
 from win_screen import win_screen
 from instructions_screen import instructions_screen
 from assets import load_assets
-# ===== Inicialização do PyGame =====
 
+# ===== Inicialização do PyGame =====
 pygame.init()
 pygame.mixer.init()
 
 # ----- Gera tela principal
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Márcio 10')
+pygame.display.set_caption('Ben 10')
+
 # ----- Carrega os assets
 assets = load_assets()
 
@@ -33,7 +34,7 @@ while state != QUIT:
                 player_final_time = time_val # Armazena o tempo se o jogador venceu
             else:
                 player_final_time = None # Garante que não há tempo se não for vitória
-        else: # Fallback caso game_screen retorne apenas o estado
+        else: 
             state = game_result
             player_final_time = None
     elif state == INSTRUCTIONS:

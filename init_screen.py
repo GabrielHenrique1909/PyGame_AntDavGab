@@ -18,6 +18,7 @@ def init_screen(screen, assets):
     all_buttons = pygame.sprite.Group()
     x = 30
     y = 90
+    
     # Criando o botão play
     botaoplay = BotaoPlay(assets)
     botaoplay.rect.x = x
