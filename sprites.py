@@ -25,6 +25,7 @@ class Ben:
         '''
         self.image = assets[BEN_IMG]
         self.state = IDLE
+        self.velocidade_x = 2.05
         self.animations = {
             IDLE: assets[IDLE_BEN],
             JUMPING: assets[JUMP_BEN],
@@ -48,6 +49,7 @@ class Diamante:
         self.shot_cooldown = 0.5
         self.blocks = groups['blocks']
         self.state = IDLE
+        self.velocidade_x = 2.05
         self.animations = {
             IDLE: assets[DIAM_IDLE],
             JUMPING: assets[DIAM_JUMP],
@@ -98,6 +100,7 @@ class Xlr8:
         '''
         self.image = assets[XLR8_IMG]
         self.state = IDLE
+        self.velocidade_x = 7.0
         self.animations = {
             IDLE: assets[XLR8_IDLE],
             JUMPING: assets[XLR8_JUMP],
@@ -117,6 +120,7 @@ class Fantasmagorico:
         '''
         self.image = assets[FANT_IMG]
         self.state = IDLE
+        self.velocidade_x = 2.05
         self.animations = {
             IDLE: assets[FANT_IDLE],
             JUMPING: assets[FANT_JUMP],
@@ -190,21 +194,13 @@ class Player(pygame.sprite.Sprite):
 
         if self.colided == False:
             if keys[pygame.K_RIGHT]:
-                if isinstance(self.current_form, Xlr8):
-                    self.speedx = 7
-                    self.worldx += self.speedx
-                else:
-                    self.speedx = 2.05
-                    self.worldx += self.speedx
+                self.speedx = self.current_form.velocidade_x
+                self.worldx += self.speedx
                 self.last_dir = 1
                 self.state = RUNNING
             if keys[pygame.K_LEFT]:
-                if isinstance(self.current_form, Xlr8):
-                    self.speedx = -7
-                    self.worldx += self.speedx
-                else:
-                    self.speedx = -2.05
-                    self.worldx += self.speedx
+                self.speedx = -self.current_form.velocidade_x
+                self.worldx += self.speedx
                 self.last_dir = -1
                 self.state = RUNNING
 
