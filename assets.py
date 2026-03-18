@@ -69,6 +69,17 @@ WIN_SOUND = 'win_sound'
 BACKGROUND_MUSIC = 'background_music'
 BTN_CLICK_SOUND = 'btn_click_sound'
 MENU_MUSIC = 'menu_music'
+def carregar_animacao(diretorio, prefixo, num_frames, largura, altura):
+    """
+    Função auxiliar que abstrai o carregamento e redimensionamento de sprites.
+    """
+    animacao = []
+    for i in range(num_frames):
+        filename = os.path.join(diretorio, f'{prefixo}0{i}.png')
+        img = pygame.image.load(filename).convert_alpha()
+        img = pygame.transform.scale(img, (largura, altura))
+        animacao.append(img)
+    return animacao
 
 def load_assets():
     '''
@@ -130,153 +141,50 @@ def load_assets():
 
     # Inimigo
     assets[ENEMY_IMG] = pygame.image.load(os.path.join(ENEMY_DIR, 'run00.png')).convert_alpha()
-    assets[ENEMY_IMG] = pygame.transform.scale(assets['enemy_image'], (BEN_WIDTH, BEN_HEIGHT))
-    enemy_anim = []
-    for i in range(8):
-        filename = os.path.join(ENEMY_DIR, f'run0{i}.png')
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        enemy_anim.append(img)
-    assets[ENEMY_ANIM] = enemy_anim
+    assets[ENEMY_IMG] = pygame.transform.scale(assets[ENEMY_IMG], (BEN_WIDTH, BEN_HEIGHT))
+    assets[ENEMY_ANIM] = carregar_animacao(ENEMY_DIR, 'run', 8, BEN_WIDTH, BEN_HEIGHT)
     assets[STILL_ENEMY] = pygame.image.load(os.path.join(ENEMY_DIR, 'still_enemy.png')).convert_alpha()
     assets[STILL_ENEMY] = pygame.transform.scale(assets[STILL_ENEMY], (24*(3/2), 32*(3/2)))
 
     # Ben
     assets[BEN_IMG] = pygame.image.load(os.path.join(BEN_DIR, 'idle00.png')).convert_alpha()
-    assets[BEN_IMG] = pygame.transform.scale(assets['ben_image'], (BEN_WIDTH, BEN_HEIGHT))
-    hurt_anim = []
-    for i in range(6):
-        filename = os.path.join(BEN_DIR, 'hurt0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        hurt_anim.append(img)
-    assets[HURT_BEN] = hurt_anim
-    idle_anim = []
-    for i in range(3):
-        filename = os.path.join(BEN_DIR, 'idle0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        idle_anim.append(img)
-    assets[IDLE_BEN] = idle_anim
-    jump_anim = []
-    for i in range(5):
-        filename = os.path.join(BEN_DIR, 'jump0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        jump_anim.append(img)
-    assets[JUMP_BEN] = jump_anim
-    run_anim = []
-    for i in range(8):
-        filename = os.path.join(BEN_DIR, 'run0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        run_anim.append(img)
-    assets[RUN_BEN] = run_anim
+    assets[BEN_IMG] = pygame.transform.scale(assets[BEN_IMG], (BEN_WIDTH, BEN_HEIGHT))
+
+    assets[HURT_BEN] = carregar_animacao(BEN_DIR, 'hurt', 6, BEN_WIDTH, BEN_HEIGHT)
+    assets[IDLE_BEN] = carregar_animacao(BEN_DIR, 'idle', 3, BEN_WIDTH, BEN_HEIGHT)
+    assets[JUMP_BEN] = carregar_animacao(BEN_DIR, 'jump', 5, BEN_WIDTH, BEN_HEIGHT)
+    assets[RUN_BEN] = carregar_animacao(BEN_DIR, 'run', 8, BEN_WIDTH, BEN_HEIGHT)
 
     # Diamante
     assets[DIAM_IMG] = pygame.image.load(os.path.join(DIAM_DIR, 'idle00.png')).convert_alpha()
-    assets[DIAM_IMG] = pygame.transform.scale(assets['diamante_image'], (BEN_WIDTH, BEN_HEIGHT))
-    diam_idle_anim = []
-    for i in range(3):
-        filename = os.path.join(DIAM_DIR, 'idle0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        diam_idle_anim.append(img)
-    assets[DIAM_IDLE] = diam_idle_anim
-    diam_jump_anim = []
-    for i in range(2):
-        filename = os.path.join(DIAM_DIR, 'jump0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        diam_jump_anim.append(img)
-    assets[DIAM_JUMP] = diam_jump_anim
-    diam_run_anim = []
-    for i in range(6):
-        filename = os.path.join(DIAM_DIR, 'run0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        diam_run_anim.append(img)
-    assets[DIAM_RUN] = diam_run_anim
-    diam_shoot_anim = []
-    for i in range(3):
-        filename = os.path.join(DIAM_DIR, 'shoot0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        diam_shoot_anim.append(img)
-    assets[DIAM_SHOOT] = diam_shoot_anim
-    diam_transform_anim = []
-    for i in range(3):
-        filename = os.path.join(DIAM_DIR, 'transform0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        diam_transform_anim.append(img)
-    assets[DIAM_TRANSFORM] = diam_transform_anim
+    assets[DIAM_IMG] = pygame.transform.scale(assets[DIAM_IMG], (BEN_WIDTH, BEN_HEIGHT))
+
+    assets[DIAM_IDLE] = carregar_animacao(DIAM_DIR, 'idle', 3, BEN_WIDTH, BEN_HEIGHT)
+    assets[DIAM_JUMP] = carregar_animacao(DIAM_DIR, 'jump', 2, BEN_WIDTH, BEN_HEIGHT)
+    assets[DIAM_RUN] = carregar_animacao(DIAM_DIR, 'run', 6, BEN_WIDTH, BEN_HEIGHT)
+    assets[DIAM_SHOOT] = carregar_animacao(DIAM_DIR, 'shoot', 3, BEN_WIDTH, BEN_HEIGHT)
+    assets[DIAM_TRANSFORM] = carregar_animacao(DIAM_DIR, 'transform', 3, BEN_WIDTH, BEN_HEIGHT)
+
     assets[DIAM_BULLET] = pygame.image.load(os.path.join(IMG_DIR, 'diamante_bullet.png')).convert_alpha()
     assets[DIAM_BULLET] = pygame.transform.scale(assets[DIAM_BULLET], (20, 20))
 
     # XLR8
     assets[XLR8_IMG] = pygame.image.load(os.path.join(XLR8_DIR, 'idle00.png')).convert_alpha()
     assets[XLR8_IMG] = pygame.transform.scale(assets[XLR8_IMG], (BEN_WIDTH, BEN_HEIGHT))
-    xlr8_idle_anim = []
-    for i in range(3):
-        filename = os.path.join(XLR8_DIR, 'idle0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        xlr8_idle_anim.append(img)
-    assets[XLR8_IDLE] = xlr8_idle_anim
-    xlr8_jump_anim = []
-    for i in range(2):
-        filename = os.path.join(XLR8_DIR, 'jump0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        xlr8_jump_anim.append(img)
-    assets[XLR8_JUMP] = xlr8_jump_anim
-    xlr8_run_anim = []
-    for i in range(4):
-        filename = os.path.join(XLR8_DIR, 'run0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        xlr8_run_anim.append(img)
-    assets[XLR8_RUN] = xlr8_run_anim
-    xlr8_transform_anim = []
-    for i in range(3):
-        filename = os.path.join(XLR8_DIR, 'transform0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        xlr8_transform_anim.append(img)
-    assets[XLR8_TRANSFORM] = xlr8_transform_anim
+
+    assets[XLR8_IDLE] = carregar_animacao(XLR8_DIR, 'idle', 3, BEN_WIDTH, BEN_HEIGHT)
+    assets[XLR8_JUMP] = carregar_animacao(XLR8_DIR, 'jump', 2, BEN_WIDTH, BEN_HEIGHT)
+    assets[XLR8_RUN] = carregar_animacao(XLR8_DIR, 'run', 4, BEN_WIDTH, BEN_HEIGHT)
+    assets[XLR8_TRANSFORM] = carregar_animacao(XLR8_DIR, 'transform', 3, BEN_WIDTH, BEN_HEIGHT)
 
     # Fantasma
     assets[FANT_IMG] = pygame.image.load(os.path.join(FANT_DIR, 'idle00.png')).convert_alpha()
     assets[FANT_IMG] = pygame.transform.scale(assets[FANT_IMG], (BEN_WIDTH, BEN_HEIGHT))
-    fant_idle_anim = []
-    for i in range(3):
-        filename = os.path.join(FANT_DIR, 'idle0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        fant_idle_anim.append(img)
-    assets[FANT_IDLE] = fant_idle_anim
-    fant_jump_anim = []
-    for i in range(2):
-        filename = os.path.join(FANT_DIR, 'jump0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        fant_jump_anim.append(img)
-    assets[FANT_JUMP] = fant_jump_anim
-    fant_run_anim = []
-    for i in range(2):
-        filename = os.path.join(FANT_DIR, 'run0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        fant_run_anim.append(img)
-    assets[FANT_RUN] = fant_run_anim
-    fant_transform_anim = []
-    for i in range(3):
-        filename = os.path.join(FANT_DIR, 'transform0{}.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (BEN_WIDTH, BEN_HEIGHT))
-        fant_transform_anim.append(img)
-    assets[FANT_TRANSFORM] = fant_transform_anim
+
+    assets[FANT_IDLE] = carregar_animacao(FANT_DIR, 'idle', 3, BEN_WIDTH, BEN_HEIGHT)
+    assets[FANT_JUMP] = carregar_animacao(FANT_DIR, 'jump', 2, BEN_WIDTH, BEN_HEIGHT)
+    assets[FANT_RUN] = carregar_animacao(FANT_DIR, 'run', 2, BEN_WIDTH, BEN_HEIGHT)
+    assets[FANT_TRANSFORM] = carregar_animacao(FANT_DIR, 'transform', 3, BEN_WIDTH, BEN_HEIGHT)
 
     # Sons
     sound_files = {
